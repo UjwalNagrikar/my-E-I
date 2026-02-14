@@ -215,15 +215,20 @@ function initPageLoad() {
     });
 }
 
-// Flash Messages System
+// ==========================================
+// FLASH MESSAGES SYSTEM - FIXED VERSION
+// ==========================================
+
 function showFlashMessage(message, type = 'success') {
-    console.log('showFlashMessage called:', message, type);
-    const container = document.getElementById('flashMessages');
+    // Get or create container
+    let container = document.getElementById('flashMessages');
     if (!container) {
-        console.error('Flash messages container not found!');
-        return;
+        console.warn('Flash messages container not found! Creating one...');
+        container = document.createElement('div');
+        container.id = 'flashMessages';
+        container.className = 'flash-messages-container';
+        document.body.appendChild(container);
     }
-    console.log('Container found:', container);
     
     const flashDiv = document.createElement('div');
     flashDiv.className = `flash-message ${type}`;
@@ -240,37 +245,45 @@ function showFlashMessage(message, type = 'success') {
     `;
     
     container.appendChild(flashDiv);
+    console.log('✅ Flash message displayed:', type, message);
     
-    // Auto remove after 5 seconds
+    // Auto remove after 5 seconds with fade effect
     setTimeout(() => {
         if (flashDiv.parentElement) {
-            flashDiv.remove();
+            flashDiv.style.animation = 'fadeOut 0.5s ease-out forwards';
+            setTimeout(() => flashDiv.remove(), 500);
         }
     }, 5000);
 }
 
 // Check for flash messages from URL parameters
 function checkFlashMessages() {
-    console.log('Checking for flash messages...');
-    const urlParams = new URLSearchParams(window.location.search);
-    const success = urlParams.get('success');
-    const error = urlParams.get('error');
-    
-    console.log('Success param:', success);
-    console.log('Error param:', error);
-    
-    if (success) {
-        console.log('Showing success message:', decodeURIComponent(success));
-        showFlashMessage(decodeURIComponent(success), 'success');
-        // Clean URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
-    
-    if (error) {
-        console.log('Showing error message:', decodeURIComponent(error));
-        showFlashMessage(decodeURIComponent(error), 'error');
-        // Clean URL
-        window.history.replaceState({}, document.title, window.location.pathname);
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const success = urlParams.get('success');
+        const error = urlParams.get('error');
+        
+        if (success) {
+            const message = decodeURIComponent(success);
+            console.log('🎉 Success message detected:', message);
+            // Small delay to ensure DOM is ready
+            setTimeout(() => showFlashMessage(message, 'success'), 100);
+            // Clean URL without reloading page
+            const cleanUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
+        
+        if (error) {
+            const message = decodeURIComponent(error);
+            console.log('❌ Error message detected:', message);
+            // Small delay to ensure DOM is ready
+            setTimeout(() => showFlashMessage(message, 'error'), 100);
+            // Clean URL without reloading page
+            const cleanUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
+    } catch (e) {
+        console.error('Error checking flash messages:', e);
     }
 }
 
@@ -285,7 +298,9 @@ function init() {
     initClickOutside();
     initParallax();
     initPageLoad();
-    checkFlashMessages();
+    
+    // IMPORTANT: Check for flash messages after a short delay
+    setTimeout(checkFlashMessages, 50);
 }
 
 // Run initialization when DOM is ready
@@ -297,3 +312,4 @@ if (document.readyState === 'loading') {
 
 // Export functions for external use if needed
 window.toggleMenu = toggleMenu;
+window.showFlashMessage = showFlashMessage;
