@@ -2225,3 +2225,10 @@ This documentation provides comprehensive guidance for developing, deploying, an
 **Version:** 1.0.0  
 **Last Updated:** November 2024  
 **Maintained By:** Development Team
+
+
+Run these app using these commnds 
+
+docker rmi -f $(docker images -aq)
+docker compose up --build -d   
+docker exec -it mysql_db mysql -u root -prootpassword
