@@ -43,7 +43,6 @@ services:
       - app-network
     volumes:
       - ./app-layer:/app
-      - ./Template:/app/Template
       - ./static:/app/static
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
