@@ -383,6 +383,7 @@
     <nav class="sidebar-nav">
         <div class="nav-label">Main</div>
         <a href="#" class="nav-item active"><span class="ni-icon">📊</span>Dashboard</a>
+        <a href="/" class="nav-item" target="_blank"><span class="ni-icon">🌐</span>View Website</a>
         <div class="nav-label">Data</div>
         <a href="#" class="nav-item" onclick="scrollToTable()"><span class="ni-icon">📨</span>All Enquiries</a>
     </nav>
@@ -534,13 +535,45 @@
     let allData  = [];
     let deleteId = null;
 
+    // ── SAFE JSON FETCH ────────────────────────────────────
+    // Always include session cookie; if server returns HTML (e.g. login redirect)
+    // instead of JSON, redirect the whole page rather than crashing.
+    async function apiFetch(url, options = {}) {
+        const res = await fetch(url, {
+            credentials: 'same-origin',   // send session cookie every time
+            ...options
+        });
+        // If we got redirected to login page, go there properly
+        if (res.redirected || res.url.includes('/admin/login')) {
+            window.location.href = '/admin/login';
+            throw new Error('Session expired — redirecting to login');
+        }
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+            // Server returned HTML (error page or redirect) — not JSON
+            const text = await res.text();
+            console.error('Non-JSON response:', res.status, text.substring(0, 200));
+            if (res.status === 401 || res.status === 302) {
+                window.location.href = '/admin/login';
+                throw new Error('Session expired');
+            }
+            throw new Error(`Server error (${res.status}) — check Flask logs`);
+        }
+        const data = await res.json();
+        // Handle JSON 401 (session expired returned as JSON from API routes)
+        if (res.status === 401 || data.redirect) {
+            showToast('⚠️ Session expired. Redirecting to login…', 'error');
+            setTimeout(() => { window.location.href = '/admin/login'; }, 1500);
+            throw new Error('Session expired');
+        }
+        return data;
+    }
+
     // ── LOAD DATA ──────────────────────────────────────────
     async function loadData(isRefresh = false) {
         if (isRefresh) document.getElementById('refreshBtn').classList.add('spinning');
         try {
-            const res  = await fetch('/admin/api/data');
-            if (!res.ok) throw new Error('Failed to fetch');
-            const data = await res.json();
+            const data = await apiFetch('/admin/api/data');
             if (data.error) throw new Error(data.error);
 
             animateStat('stat-total', data.stats.total);
@@ -661,13 +694,13 @@
     }
     async function confirmDelete() {
         if (!deleteId) return;
+        const idToDelete = deleteId;
         closeDeleteModal();
         try {
-            const res  = await fetch(`/admin/api/delete/${deleteId}`, { method: 'POST' });
-            const data = await res.json();
+            const data = await apiFetch(`/admin/api/delete/${idToDelete}`, { method: 'POST' });
             if (data.success) {
-                allData = allData.filter(q => q.id !== deleteId);
-                const row = document.getElementById(`row-${deleteId}`);
+                allData = allData.filter(q => q.id !== idToDelete);
+                const row = document.getElementById(`row-${idToDelete}`);
                 if (row) {
                     row.style.transition = 'all 0.3s ease';
                     row.style.opacity    = '0';

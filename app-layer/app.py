@@ -119,6 +119,9 @@ def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if 'admin_logged_in' not in session:
+            # Return JSON 401 for API routes so JS can handle it properly
+            if request.path.startswith('/admin/api/'):
+                return jsonify({"error": "Session expired. Please log in again.", "redirect": "/admin/login"}), 401
             return redirect(url_for('admin_login'))
         return f(*args, **kwargs)
     return decorated
