@@ -6,6 +6,85 @@
     <title>Transolux Enterprises - Global Trade Solutions</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ── Country Code Phone Field ── */
+        .phone-input-group {
+            display: flex;
+            align-items: stretch;
+            background: #f8faff;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .phone-input-group:focus-within {
+            border-color: var(--blue);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(26,108,240,0.07);
+        }
+        .country-select-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border-right: 1.5px solid var(--border);
+            background: rgba(26,108,240,0.04);
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+        .phone-input-group:focus-within .country-select-wrap {
+            background: rgba(26,108,240,0.06);
+        }
+        .country-flag {
+            position: absolute;
+            left: 10px;
+            font-size: 1.1rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .country-select {
+            appearance: none;
+            -webkit-appearance: none;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--dark);
+            cursor: pointer;
+            padding: 0.8rem 1.6rem 0.8rem 2.4rem;
+            min-width: 120px;
+            position: relative;
+            z-index: 2;
+        }
+        .country-chevron {
+            position: absolute;
+            right: 8px;
+            font-size: 0.65rem;
+            color: var(--muted);
+            pointer-events: none;
+        }
+        .phone-number-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: var(--dark);
+            padding: 0.8rem 0.8rem 0.8rem 0.6rem;
+        }
+        .phone-number-input::placeholder { color: #b0bec5; }
+        .phone-required-note {
+            font-size: 0.72rem;
+            color: var(--blue);
+            font-weight: 500;
+            margin-top: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+    </style>
 </head>
 <body>
 
@@ -48,11 +127,10 @@
             <div class="shape s3"></div>
             <div class="shape s4"></div>
         </div>
-
         <div class="hero-left fade-up">
             <div class="hero-eyebrow">
                 <span class="dot"></span>
-                India-Based Import & Export Company
+                India-Based Import &amp; Export Company
             </div>
             <h1>
                 Your Gateway to<br>
@@ -68,21 +146,11 @@
                 <a href="#services" class="btn btn-outline">View Products</a>
             </div>
             <div class="hero-badges">
-                <div class="hb-item">
-                    <span class="hb-icon">🏭</span>
-                    <span>Verified Suppliers</span>
-                </div>
-                <div class="hb-item">
-                    <span class="hb-icon">📋</span>
-                    <span>Full Documentation</span>
-                </div>
-                <div class="hb-item">
-                    <span class="hb-icon">🤝</span>
-                    <span>Dedicated Support</span>
-                </div>
+                <div class="hb-item"><span class="hb-icon">🏭</span><span>Verified Suppliers</span></div>
+                <div class="hb-item"><span class="hb-icon">📋</span><span>Full Documentation</span></div>
+                <div class="hb-item"><span class="hb-icon">🤝</span><span>Dedicated Support</span></div>
             </div>
         </div>
-
         <div class="hero-right fade-up" style="animation-delay:0.25s">
             <div class="hero-visual">
                 <div class="globe-card">
@@ -101,20 +169,12 @@
                         <div class="globe-orbit go3"><div class="go-dot">📦</div></div>
                     </div>
                 </div>
-                <!-- Value prop floating cards (no fake numbers) -->
-                <div class="val-float vf1">
-                    <div class="vf-icon">✓</div>
-                    <span>Quality Assured</span>
-                </div>
-                <div class="val-float vf2">
-                    <div class="vf-icon">🚀</div>
-                    <span>Fast Shipping</span>
-                </div>
+                <div class="val-float vf1"><div class="vf-icon">✓</div><span>Quality Assured</span></div>
+                <div class="val-float vf2"><div class="vf-icon">🚀</div><span>Fast Shipping</span></div>
             </div>
         </div>
     </section>
 
-    
     <!-- SERVICES -->
     <section id="services" class="services">
         <div class="container">
@@ -126,43 +186,28 @@
             <div class="products-grid">
                 <div class="product-card reveal" data-delay="0">
                     <div class="pc-accent"></div>
-                    <div class="pc-icon-wrap">
-                        <div class="pc-icon-bg"></div>
-                        <span class="pc-icon">🧅</span>
-                    </div>
+                    <div class="pc-icon-wrap"><div class="pc-icon-bg"></div><span class="pc-icon">🧅</span></div>
                     <h3>Food Products</h3>
                     <ul class="product-list">
-                        <li>Onions</li>
-                        <li>Cashews</li>
-                        <li>Spices</li>
-                        <li>Rice</li>
+                        <li>Onions</li><li>Cashews</li><li>Spices</li><li>Rice</li>
                     </ul>
                     <div class="pc-badge">Export Ready</div>
                 </div>
-
                 <div class="product-card reveal" data-delay="120">
                     <div class="pc-accent"></div>
-                    <div class="pc-icon-wrap">
-                        <div class="pc-icon-bg"></div>
-                        <span class="pc-icon">👗</span>
-                    </div>
-                    <h3>Clothing & Fashion</h3>
+                    <div class="pc-icon-wrap"><div class="pc-icon-bg"></div><span class="pc-icon">👗</span></div>
+                    <h3>Clothing &amp; Fashion</h3>
                     <p>Premium fashion items and clothing products sourced from verified manufacturers, ready for international markets worldwide.</p>
                     <div class="pc-badge">Premium Quality</div>
                 </div>
-
                 <div class="product-card reveal" data-delay="240">
                     <div class="pc-accent"></div>
-                    <div class="pc-icon-wrap">
-                        <div class="pc-icon-bg"></div>
-                        <span class="pc-icon">🎨</span>
-                    </div>
-                    <h3>Toys & Handicrafts</h3>
+                    <div class="pc-icon-wrap"><div class="pc-icon-bg"></div><span class="pc-icon">🎨</span></div>
+                    <h3>Toys &amp; Handicrafts</h3>
                     <p>Unique toys and exquisite handicrafts showcasing India's traditional craftsmanship and exceptional quality standards.</p>
                     <div class="pc-badge">Handcrafted</div>
                 </div>
             </div>
-
             <div class="trade-banner reveal">
                 <div class="tb-left">
                     <span class="tb-icon">💼</span>
@@ -186,36 +231,31 @@
             </div>
             <div class="why-grid">
                 <div class="why-card reveal" data-delay="0">
-                    <div class="wc-num">01</div>
-                    <div class="wc-icon">✓</div>
+                    <div class="wc-num">01</div><div class="wc-icon">✓</div>
                     <h3>Quality-Checked Products</h3>
                     <p>Every product undergoes rigorous quality inspection to ensure it meets international standards before shipping.</p>
                     <div class="wc-line"></div>
                 </div>
                 <div class="why-card reveal" data-delay="100">
-                    <div class="wc-num">02</div>
-                    <div class="wc-icon">🏭</div>
+                    <div class="wc-num">02</div><div class="wc-icon">🏭</div>
                     <h3>Genuine Verified Suppliers</h3>
                     <p>We work only with verified and trusted suppliers who maintain consistent quality and reliability at scale.</p>
                     <div class="wc-line"></div>
                 </div>
                 <div class="why-card reveal" data-delay="200">
-                    <div class="wc-num">03</div>
-                    <div class="wc-icon">💰</div>
-                    <h3>Fair & Transparent Pricing</h3>
+                    <div class="wc-num">03</div><div class="wc-icon">💰</div>
+                    <h3>Fair &amp; Transparent Pricing</h3>
                     <p>Competitive pricing with absolutely no hidden costs, ensuring maximum value and trust from the start.</p>
                     <div class="wc-line"></div>
                 </div>
                 <div class="why-card reveal" data-delay="0">
-                    <div class="wc-num">04</div>
-                    <div class="wc-icon">📋</div>
+                    <div class="wc-num">04</div><div class="wc-icon">📋</div>
                     <h3>Full Documentation Support</h3>
                     <p>We handle all export documentation, customs paperwork, and compliance so you can trade without worry.</p>
                     <div class="wc-line"></div>
                 </div>
                 <div class="why-card reveal" data-delay="100">
-                    <div class="wc-num">05</div>
-                    <div class="wc-icon">🎯</div>
+                    <div class="wc-num">05</div><div class="wc-icon">🎯</div>
                     <h3>Dedicated Personal Service</h3>
                     <p>As a growing business, every client matters deeply. You get direct, attentive, and personalized attention.</p>
                     <div class="wc-line"></div>
@@ -241,21 +281,14 @@
                             <div class="map-pulse mp3"></div>
                         </div>
                         <div class="av-info">
-                            <div class="av-stat">
-                                <strong>Nagpur, India</strong>
-                                <span>Headquarters</span>
-                            </div>
+                            <div class="av-stat"><strong>Nagpur, India</strong><span>Headquarters</span></div>
                             <div class="av-divider"></div>
-                            <div class="av-stat">
-                                <strong>India & Beyond</strong>
-                                <span>Sourcing Network</span>
-                            </div>
+                            <div class="av-stat"><strong>India &amp; Beyond</strong><span>Sourcing Network</span></div>
                         </div>
                     </div>
                     <div class="av-badge ab1">🏆 Quality Focused</div>
                     <div class="av-badge ab2">🔒 Fully Compliant</div>
                 </div>
-
                 <div class="about-text reveal">
                     <div class="sec-tag">Our Story</div>
                     <h2 style="text-align:left">About <span class="grad-text">Transolux</span></h2>
@@ -286,27 +319,17 @@
                     <div class="cl-card">
                         <div class="contact-item">
                             <div class="ci-icon">📍</div>
-                            <div class="ci-body">
-                                <h4>Our Office</h4>
-                                <p>Nagpur, Maharashtra, India</p>
-                            </div>
+                            <div class="ci-body"><h4>Our Office</h4><p>Nagpur, Maharashtra, India</p></div>
                         </div>
                         <div class="contact-item">
                             <div class="ci-icon">📞</div>
-                            <div class="ci-body">
-                                <h4>Phone</h4>
-                                <p>+91 84463 62075</p>
-                            </div>
+                            <div class="ci-body"><h4>Phone</h4><p>+91 84463 62075</p></div>
                         </div>
                         <div class="contact-item">
                             <div class="ci-icon">✉️</div>
-                            <div class="ci-body">
-                                <h4>Email</h4>
-                                <p>ujjwalnagrikar@gmail.com</p>
-                            </div>
+                            <div class="ci-body"><h4>Email</h4><p>ujjwalnagrikar@gmail.com</p></div>
                         </div>
                     </div>
-
                     <div class="cl-commitment">
                         <div class="cc-icon">💬</div>
                         <div>
@@ -316,41 +339,326 @@
                     </div>
                 </div>
 
-                <form class="contact-form reveal" action="/submit" method="POST">
+                <!-- CONTACT FORM -->
+                <form class="contact-form reveal" id="contactForm" action="/submit" method="POST">
                     <div class="form-header">
                         <h3>Send Us a Message</h3>
                         <p>Tell us what you need and we'll get back to you promptly</p>
                     </div>
+
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Full Name</label>
+                            <label for="name">Full Name</label>
                             <div class="input-box">
                                 <span class="ib-icon">👤</span>
                                 <input type="text" id="name" name="name" placeholder="Your Name" required>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Email Address</label>
+                            <label for="email">Email Address</label>
                             <div class="input-box">
                                 <span class="ib-icon">✉️</span>
                                 <input type="email" id="email" name="email" placeholder="you@example.com" required>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Hidden field — Flask receives combined "+code number" -->
+                    <input type="hidden" id="phone" name="phone">
+
                     <div class="form-group">
-                        <label>Phone Number <span class="opt">(Optional)</span></label>
-                        <div class="input-box">
-                            <span class="ib-icon">📞</span>
-                            <input type="tel" id="phone" name="phone" placeholder="+91 00000 00000">
+                        <label for="phoneNumber">
+                            Phone Number
+                            <span style="color:#ef4444;font-size:0.75rem;font-weight:600;margin-left:4px;">✱ Required</span>
+                        </label>
+                        <div class="phone-input-group" id="phoneInputGroup">
+                            <!-- Country code selector -->
+                            <div class="country-select-wrap">
+                                <span class="country-flag" id="countryFlag">🇮🇳</span>
+                                <select class="country-select" id="countryCode" required>
+                                    <!-- A -->
+                                    <option value="+93"  data-flag="🇦🇫">🇦🇫 AF +93</option>
+                                    <option value="+355" data-flag="🇦🇱">🇦🇱 AL +355</option>
+                                    <option value="+213" data-flag="🇩🇿">🇩🇿 DZ +213</option>
+                                    <option value="+376" data-flag="🇦🇩">🇦🇩 AD +376</option>
+                                    <option value="+244" data-flag="🇦🇴">🇦🇴 AO +244</option>
+                                    <option value="+1"   data-flag="🇦🇬">🇦🇬 AG +1</option>
+                                    <option value="+54"  data-flag="🇦🇷">🇦🇷 AR +54</option>
+                                    <option value="+374" data-flag="🇦🇲">🇦🇲 AM +374</option>
+                                    <option value="+297" data-flag="🇦🇼">🇦🇼 AW +297</option>
+                                    <option value="+61"  data-flag="🇦🇺">🇦🇺 AU +61</option>
+                                    <option value="+43"  data-flag="🇦🇹">🇦🇹 AT +43</option>
+                                    <option value="+994" data-flag="🇦🇿">🇦🇿 AZ +994</option>
+
+                                    <!-- B -->
+                                    <option value="+1"   data-flag="🇧🇸">🇧🇸 BS +1</option>
+                                    <option value="+973" data-flag="🇧🇭">🇧🇭 BH +973</option>
+                                    <option value="+880" data-flag="🇧🇩">🇧🇩 BD +880</option>
+                                    <option value="+1"   data-flag="🇧🇧">🇧🇧 BB +1</option>
+                                    <option value="+375" data-flag="🇧🇾">🇧🇾 BY +375</option>
+                                    <option value="+32"  data-flag="🇧🇪">🇧🇪 BE +32</option>
+                                    <option value="+501" data-flag="🇧🇿">🇧🇿 BZ +501</option>
+                                    <option value="+229" data-flag="🇧🇯">🇧🇯 BJ +229</option>
+                                    <option value="+975" data-flag="🇧🇹">🇧🇹 BT +975</option>
+                                    <option value="+591" data-flag="🇧🇴">🇧🇴 BO +591</option>
+                                    <option value="+387" data-flag="🇧🇦">🇧🇦 BA +387</option>
+                                    <option value="+267" data-flag="🇧🇼">🇧🇼 BW +267</option>
+                                    <option value="+55"  data-flag="🇧🇷">🇧🇷 BR +55</option>
+                                    <option value="+673" data-flag="🇧🇳">🇧🇳 BN +673</option>
+                                    <option value="+359" data-flag="🇧🇬">🇧🇬 BG +359</option>
+                                    <option value="+226" data-flag="🇧🇫">🇧🇫 BF +226</option>
+                                    <option value="+257" data-flag="🇧🇮">🇧🇮 BI +257</option>
+
+                                    <!-- C -->
+                                    <option value="+238" data-flag="🇨🇻">🇨🇻 CV +238</option>
+                                    <option value="+855" data-flag="🇰🇭">🇰🇭 KH +855</option>
+                                    <option value="+237" data-flag="🇨🇲">🇨🇲 CM +237</option>
+                                    <option value="+1"   data-flag="🇨🇦">🇨🇦 CA +1</option>
+                                    <option value="+236" data-flag="🇨🇫">🇨🇫 CF +236</option>
+                                    <option value="+235" data-flag="🇹🇩">🇹🇩 TD +235</option>
+                                    <option value="+56"  data-flag="🇨🇱">🇨🇱 CL +56</option>
+                                    <option value="+86"  data-flag="🇨🇳">🇨🇳 CN +86</option>
+                                    <option value="+57"  data-flag="🇨🇴">🇨🇴 CO +57</option>
+                                    <option value="+269" data-flag="🇰🇲">🇰🇲 KM +269</option>
+                                    <option value="+242" data-flag="🇨🇬">🇨🇬 CG +242</option>
+                                    <option value="+243" data-flag="🇨🇩">🇨🇩 CD +243</option>
+                                    <option value="+506" data-flag="🇨🇷">🇨🇷 CR +506</option>
+                                    <option value="+225" data-flag="🇨🇮">🇨🇮 CI +225</option>
+                                    <option value="+385" data-flag="🇭🇷">🇭🇷 HR +385</option>
+                                    <option value="+53"  data-flag="🇨🇺">🇨🇺 CU +53</option>
+                                    <option value="+357" data-flag="🇨🇾">🇨🇾 CY +357</option>
+                                    <option value="+420" data-flag="🇨🇿">🇨🇿 CZ +420</option>
+
+                                    <!-- D -->
+                                    <option value="+45"  data-flag="🇩🇰">🇩🇰 DK +45</option>
+                                    <option value="+253" data-flag="🇩🇯">🇩🇯 DJ +253</option>
+                                    <option value="+1"   data-flag="🇩🇲">🇩🇲 DM +1</option>
+                                    <option value="+1"   data-flag="🇩🇴">🇩🇴 DO +1</option>
+
+                                    <!-- E -->
+                                    <option value="+593" data-flag="🇪🇨">🇪🇨 EC +593</option>
+                                    <option value="+20"  data-flag="🇪🇬">🇪🇬 EG +20</option>
+                                    <option value="+503" data-flag="🇸🇻">🇸🇻 SV +503</option>
+                                    <option value="+240" data-flag="🇬🇶">🇬🇶 GQ +240</option>
+                                    <option value="+291" data-flag="🇪🇷">🇪🇷 ER +291</option>
+                                    <option value="+372" data-flag="🇪🇪">🇪🇪 EE +372</option>
+                                    <option value="+268" data-flag="🇸🇿">🇸🇿 SZ +268</option>
+                                    <option value="+251" data-flag="🇪🇹">🇪🇹 ET +251</option>
+
+                                    <!-- F -->
+                                    <option value="+679" data-flag="🇫🇯">🇫🇯 FJ +679</option>
+                                    <option value="+358" data-flag="🇫🇮">🇫🇮 FI +358</option>
+                                    <option value="+298" data-flag="🇫🇴">🇫🇴 FO +298</option>
+                                    <option value="+33"  data-flag="🇫🇷">🇫🇷 FR +33</option>
+
+                                    <!-- G -->
+                                    <option value="+241" data-flag="🇬🇦">🇬🇦 GA +241</option>
+                                    <option value="+220" data-flag="🇬🇲">🇬🇲 GM +220</option>
+                                    <option value="+995" data-flag="🇬🇪">🇬🇪 GE +995</option>
+                                    <option value="+49"  data-flag="🇩🇪">🇩🇪 DE +49</option>
+                                    <option value="+233" data-flag="🇬🇭">🇬🇭 GH +233</option>
+                                    <option value="+350" data-flag="🇬🇮">🇬🇮 GI +350</option>
+                                    <option value="+299" data-flag="🇬🇱">🇬🇱 GL +299</option>
+                                    <option value="+30"  data-flag="🇬🇷">🇬🇷 GR +30</option>
+                                    <option value="+1"   data-flag="🇬🇩">🇬🇩 GD +1</option>
+                                    <option value="+1"   data-flag="🇬🇺">🇬🇺 GU +1</option>
+                                    <option value="+502" data-flag="🇬🇹">🇬🇹 GT +502</option>
+                                    <option value="+224" data-flag="🇬🇳">🇬🇳 GN +224</option>
+                                    <option value="+245" data-flag="🇬🇼">🇬🇼 GW +245</option>
+                                    <option value="+592" data-flag="🇬🇾">🇬🇾 GY +592</option>
+
+                                    <!-- H -->
+                                    <option value="+509" data-flag="🇭🇹">🇭🇹 HT +509</option>
+                                    <option value="+504" data-flag="🇭🇳">🇭🇳 HN +504</option>
+                                    <option value="+852" data-flag="🇭🇰">🇭🇰 HK +852</option>
+                                    <option value="+36"  data-flag="🇭🇺">🇭🇺 HU +36</option>
+
+                                    <!-- I -->
+                                    <option value="+91" data-flag="🇮🇳" selected>🇮🇳 IN +91</option>
+                                    <option value="+354" data-flag="🇮🇸">🇮🇸 IS +354</option>
+                                    <option value="+62"  data-flag="🇮🇩">🇮🇩 ID +62</option>
+                                    <option value="+98"  data-flag="🇮🇷">🇮🇷 IR +98</option>
+                                    <option value="+964" data-flag="🇮🇶">🇮🇶 IQ +964</option>
+                                    <option value="+353" data-flag="🇮🇪">🇮🇪 IE +353</option>
+                                    <option value="+972" data-flag="🇮🇱">🇮🇱 IL +972</option>
+                                    <option value="+39"  data-flag="🇮🇹">🇮🇹 IT +39</option>
+
+                                    <!-- J -->
+                                    <option value="+1"   data-flag="🇯🇲">🇯🇲 JM +1</option>
+                                    <option value="+81"  data-flag="🇯🇵">🇯🇵 JP +81</option>
+                                    <option value="+962" data-flag="🇯🇴">🇯🇴 JO +962</option>
+
+                                    <!-- K -->
+                                    <option value="+7"   data-flag="🇰🇿">🇰🇿 KZ +7</option>
+                                    <option value="+254" data-flag="🇰🇪">🇰🇪 KE +254</option>
+                                    <option value="+686" data-flag="🇰🇮">🇰🇮 KI +686</option>
+                                    <option value="+850" data-flag="🇰🇵">🇰🇵 KP +850</option>
+                                    <option value="+82"  data-flag="🇰🇷">🇰🇷 KR +82</option>
+                                    <option value="+383" data-flag="🇽🇰">🇽🇰 XK +383</option>
+                                    <option value="+965" data-flag="🇰🇼">🇰🇼 KW +965</option>
+                                    <option value="+996" data-flag="🇰🇬">🇰🇬 KG +996</option>
+
+                                    <!-- L -->
+                                    <option value="+856" data-flag="🇱🇦">🇱🇦 LA +856</option>
+                                    <option value="+371" data-flag="🇱🇻">🇱🇻 LV +371</option>
+                                    <option value="+961" data-flag="🇱🇧">🇱🇧 LB +961</option>
+                                    <option value="+266" data-flag="🇱🇸">🇱🇸 LS +266</option>
+                                    <option value="+231" data-flag="🇱🇷">🇱🇷 LR +231</option>
+                                    <option value="+218" data-flag="🇱🇾">🇱🇾 LY +218</option>
+                                    <option value="+423" data-flag="🇱🇮">🇱🇮 LI +423</option>
+                                    <option value="+370" data-flag="🇱🇹">🇱🇹 LT +370</option>
+                                    <option value="+352" data-flag="🇱🇺">🇱🇺 LU +352</option>
+
+                                    <!-- M -->
+                                    <option value="+853" data-flag="🇲🇴">🇲🇴 MO +853</option>
+                                    <option value="+261" data-flag="🇲🇬">🇲🇬 MG +261</option>
+                                    <option value="+265" data-flag="🇲🇼">🇲🇼 MW +265</option>
+                                    <option value="+60"  data-flag="🇲🇾">🇲🇾 MY +60</option>
+                                    <option value="+960" data-flag="🇲🇻">🇲🇻 MV +960</option>
+                                    <option value="+223" data-flag="🇲🇱">🇲🇱 ML +223</option>
+                                    <option value="+356" data-flag="🇲🇹">🇲🇹 MT +356</option>
+                                    <option value="+692" data-flag="🇲🇭">🇲🇭 MH +692</option>
+                                    <option value="+222" data-flag="🇲🇷">🇲🇷 MR +222</option>
+                                    <option value="+230" data-flag="🇲🇺">🇲🇺 MU +230</option>
+                                    <option value="+52"  data-flag="🇲🇽">🇲🇽 MX +52</option>
+                                    <option value="+691" data-flag="🇫🇲">🇫🇲 FM +691</option>
+                                    <option value="+373" data-flag="🇲🇩">🇲🇩 MD +373</option>
+                                    <option value="+377" data-flag="🇲🇨">🇲🇨 MC +377</option>
+                                    <option value="+976" data-flag="🇲🇳">🇲🇳 MN +976</option>
+                                    <option value="+382" data-flag="🇲🇪">🇲🇪 ME +382</option>
+                                    <option value="+212" data-flag="🇲🇦">🇲🇦 MA +212</option>
+                                    <option value="+258" data-flag="🇲🇿">🇲🇿 MZ +258</option>
+                                    <option value="+95"  data-flag="🇲🇲">🇲🇲 MM +95</option>
+                                    <option value="+389" data-flag="🇲🇰">🇲🇰 MK +389</option>
+
+                                    <!-- N -->
+                                    <option value="+264" data-flag="🇳🇦">🇳🇦 NA +264</option>
+                                    <option value="+674" data-flag="🇳🇷">🇳🇷 NR +674</option>
+                                    <option value="+977" data-flag="🇳🇵">🇳🇵 NP +977</option>
+                                    <option value="+31"  data-flag="🇳🇱">🇳🇱 NL +31</option>
+                                    <option value="+687" data-flag="🇳🇨">🇳🇨 NC +687</option>
+                                    <option value="+64"  data-flag="🇳🇿">🇳🇿 NZ +64</option>
+                                    <option value="+505" data-flag="🇳🇮">🇳🇮 NI +505</option>
+                                    <option value="+227" data-flag="🇳🇪">🇳🇪 NE +227</option>
+                                    <option value="+234" data-flag="🇳🇬">🇳🇬 NG +234</option>
+                                    <option value="+47"  data-flag="🇳🇴">🇳🇴 NO +47</option>
+
+                                    <!-- O -->
+                                    <option value="+968" data-flag="🇴🇲">🇴🇲 OM +968</option>
+
+                                    <!-- P -->
+                                    <option value="+92"  data-flag="🇵🇰">🇵🇰 PK +92</option>
+                                    <option value="+680" data-flag="🇵🇼">🇵🇼 PW +680</option>
+                                    <option value="+970" data-flag="🇵🇸">🇵🇸 PS +970</option>
+                                    <option value="+507" data-flag="🇵🇦">🇵🇦 PA +507</option>
+                                    <option value="+675" data-flag="🇵🇬">🇵🇬 PG +675</option>
+                                    <option value="+595" data-flag="🇵🇾">🇵🇾 PY +595</option>
+                                    <option value="+51"  data-flag="🇵🇪">🇵🇪 PE +51</option>
+                                    <option value="+63"  data-flag="🇵🇭">🇵🇭 PH +63</option>
+                                    <option value="+48"  data-flag="🇵🇱">🇵🇱 PL +48</option>
+                                    <option value="+351" data-flag="🇵🇹">🇵🇹 PT +351</option>
+                                    <option value="+1"   data-flag="🇵🇷">🇵🇷 PR +1</option>
+
+                                    <!-- Q -->
+                                    <option value="+974" data-flag="🇶🇦">🇶🇦 QA +974</option>
+
+                                    <!-- R -->
+                                    <option value="+262" data-flag="🇷🇪">🇷🇪 RE +262</option>
+                                    <option value="+40"  data-flag="🇷🇴">🇷🇴 RO +40</option>
+                                    <option value="+7"   data-flag="🇷🇺">🇷🇺 RU +7</option>
+                                    <option value="+250" data-flag="🇷🇼">🇷🇼 RW +250</option>
+
+                                    <!-- S -->
+                                    <option value="+1"   data-flag="🇰🇳">🇰🇳 KN +1</option>
+                                    <option value="+1"   data-flag="🇱🇨">🇱🇨 LC +1</option>
+                                    <option value="+1"   data-flag="🇻🇨">🇻🇨 VC +1</option>
+                                    <option value="+685" data-flag="🇼🇸">🇼🇸 WS +685</option>
+                                    <option value="+378" data-flag="🇸🇲">🇸🇲 SM +378</option>
+                                    <option value="+239" data-flag="🇸🇹">🇸🇹 ST +239</option>
+                                    <option value="+966" data-flag="🇸🇦">🇸🇦 SA +966</option>
+                                    <option value="+221" data-flag="🇸🇳">🇸🇳 SN +221</option>
+                                    <option value="+381" data-flag="🇷🇸">🇷🇸 RS +381</option>
+                                    <option value="+248" data-flag="🇸🇨">🇸🇨 SC +248</option>
+                                    <option value="+232" data-flag="🇸🇱">🇸🇱 SL +232</option>
+                                    <option value="+65"  data-flag="🇸🇬">🇸🇬 SG +65</option>
+                                    <option value="+421" data-flag="🇸🇰">🇸🇰 SK +421</option>
+                                    <option value="+386" data-flag="🇸🇮">🇸🇮 SI +386</option>
+                                    <option value="+677" data-flag="🇸🇧">🇸🇧 SB +677</option>
+                                    <option value="+252" data-flag="🇸🇴">🇸🇴 SO +252</option>
+                                    <option value="+27"  data-flag="🇿🇦">🇿🇦 ZA +27</option>
+                                    <option value="+211" data-flag="🇸🇸">🇸🇸 SS +211</option>
+                                    <option value="+34"  data-flag="🇪🇸">🇪🇸 ES +34</option>
+                                    <option value="+94"  data-flag="🇱🇰">🇱🇰 LK +94</option>
+                                    <option value="+249" data-flag="🇸🇩">🇸🇩 SD +249</option>
+                                    <option value="+597" data-flag="🇸🇷">🇸🇷 SR +597</option>
+                                    <option value="+46"  data-flag="🇸🇪">🇸🇪 SE +46</option>
+                                    <option value="+41"  data-flag="🇨🇭">🇨🇭 CH +41</option>
+                                    <option value="+963" data-flag="🇸🇾">🇸🇾 SY +963</option>
+
+                                    <!-- T -->
+                                    <option value="+886" data-flag="🇹🇼">🇹🇼 TW +886</option>
+                                    <option value="+992" data-flag="🇹🇯">🇹🇯 TJ +992</option>
+                                    <option value="+255" data-flag="🇹🇿">🇹🇿 TZ +255</option>
+                                    <option value="+66"  data-flag="🇹🇭">🇹🇭 TH +66</option>
+                                    <option value="+670" data-flag="🇹🇱">🇹🇱 TL +670</option>
+                                    <option value="+228" data-flag="🇹🇬">🇹🇬 TG +228</option>
+                                    <option value="+676" data-flag="🇹🇴">🇹🇴 TO +676</option>
+                                    <option value="+1"   data-flag="🇹🇹">🇹🇹 TT +1</option>
+                                    <option value="+216" data-flag="🇹🇳">🇹🇳 TN +216</option>
+                                    <option value="+90"  data-flag="🇹🇷">🇹🇷 TR +90</option>
+                                    <option value="+993" data-flag="🇹🇲">🇹🇲 TM +993</option>
+                                    <option value="+688" data-flag="🇹🇻">🇹🇻 TV +688</option>
+
+                                    <!-- U -->
+                                    <option value="+256" data-flag="🇺🇬">🇺🇬 UG +256</option>
+                                    <option value="+380" data-flag="🇺🇦">🇺🇦 UA +380</option>
+                                    <option value="+971" data-flag="🇦🇪">🇦🇪 AE +971</option>
+                                    <option value="+44"  data-flag="🇬🇧">🇬🇧 GB +44</option>
+                                    <option value="+1"   data-flag="🇺🇸">🇺🇸 US +1</option>
+                                    <option value="+598" data-flag="🇺🇾">🇺🇾 UY +598</option>
+                                    <option value="+998" data-flag="🇺🇿">🇺🇿 UZ +998</option>
+
+                                    <!-- V -->
+                                    <option value="+678" data-flag="🇻🇺">🇻🇺 VU +678</option>
+                                    <option value="+379" data-flag="🇻🇦">🇻🇦 VA +379</option>
+                                    <option value="+58"  data-flag="🇻🇪">🇻🇪 VE +58</option>
+                                    <option value="+84"  data-flag="🇻🇳">🇻🇳 VN +84</option>
+
+                                    <!-- Y -->
+                                    <option value="+967" data-flag="🇾🇪">🇾🇪 YE +967</option>
+
+                                    <!-- Z -->
+                                    <option value="+260" data-flag="🇿🇲">🇿🇲 ZM +260</option>
+                                    <option value="+263" data-flag="🇿🇼">🇿🇼 ZW +263</option>
+
+                                    </optgroup>
+                                </select>
+                                <span class="country-chevron">▼</span>
+                            </div>
+                            <!-- Number input -->
+                            <input
+                                type="tel"
+                                id="phoneNumber"
+                                class="phone-number-input"
+                                placeholder="Enter phone number"
+                                pattern="[0-9\s\-]{6,15}"
+                                required
+                                title="Please enter a valid phone number (digits only)"
+                            >
+                        </div>
+                        <div class="phone-required-note">
+                            <span>📍</span> Country code required — helps us reach you correctly
                         </div>
                     </div>
+
                     <div class="form-group">
-                        <label>Your Message</label>
+                        <label for="message">Your Message</label>
                         <div class="input-box ib-ta">
                             <span class="ib-icon ib-ta-icon">💬</span>
                             <textarea id="message" name="message" placeholder="Tell us about your trade requirements..." required></textarea>
                         </div>
                     </div>
+
                     <button type="submit" class="btn btn-primary btn-full">
                         Send Message
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
@@ -383,11 +691,48 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2024 Transolux Enterprises. All rights reserved. | Nagpur, Maharashtra, India</p>
+                <p>&copy; 2024 Transolux Enterprises. All rights reserved. | Nagpur, Maharashtra, India</p>
             </div>
         </div>
     </footer>
 
     <script src="script.js?v=5"></script>
+    <script>
+    // ── Country flag updater ──────────────────────────────────
+    const countryCodeSelect = document.getElementById('countryCode');
+    const countryFlagEl     = document.getElementById('countryFlag');
+
+    function updateFlag() {
+        const selected = countryCodeSelect.options[countryCodeSelect.selectedIndex];
+        countryFlagEl.textContent = selected.getAttribute('data-flag') || '🌐';
+    }
+    countryCodeSelect.addEventListener('change', updateFlag);
+    updateFlag(); // set on page load
+
+    // ── Combine code + number into hidden field before submit ──
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        const code   = countryCodeSelect.value;
+        const number = document.getElementById('phoneNumber').value.trim();
+
+        if (!number) {
+            e.preventDefault();
+            const group = document.getElementById('phoneInputGroup');
+            group.style.borderColor = '#ef4444';
+            group.style.boxShadow   = '0 0 0 3px rgba(239,68,68,0.1)';
+            document.getElementById('phoneNumber').focus();
+            return;
+        }
+
+        // Flask receives e.g. "+852 91234567" in the 'phone' field
+        document.getElementById('phone').value = code + ' ' + number;
+    });
+
+    // Reset red highlight when user types
+    document.getElementById('phoneNumber').addEventListener('input', function() {
+        const group = document.getElementById('phoneInputGroup');
+        group.style.borderColor = '';
+        group.style.boxShadow   = '';
+    });
+    </script>
 </body>
 </html>
