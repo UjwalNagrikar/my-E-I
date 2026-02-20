@@ -290,9 +290,6 @@ def not_found(e):
 def server_error(e):
     return render_template('500.html'), 500
 
-
-
-
 if __name__ == '__main__':
     print("\n Starting Flask server on http://0.0.0.0:5000")
     print(" Admin panel: http://localhost:5000/admin")
