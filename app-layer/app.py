@@ -7,43 +7,41 @@ import os
 import time
 from datetime import datetime, timedelta
 
-# ── FIX 1: template_folder matches your actual folder name "Template" (capital T)
 app = Flask(__name__, static_folder='static', template_folder='Template')
 app.secret_key = 'transolux-enterprises-secret-key-2024'
 app.permanent_session_lifetime = timedelta(hours=3)
 
-# Admin credentials
+# Admin credentials``
 ADMIN_USERNAME = "ujwal"
 ADMIN_PASSWORD = "ujwal9494"
 
 # Database Configuration for Docker
+
 db_host     = os.getenv("DB_HOST",     "mysql")
 db_user     = os.getenv("DB_USER",     "root")
 db_password = os.getenv("DB_PASSWORD", "rootpassword")
 db_name     = os.getenv("DB_NAME",     "mywebsite")
 
 print("=" * 50)
-print("🔧 DATABASE CONFIGURATION")
+print(" DATABASE CONFIGURATION")
 print("=" * 50)
 print(f"Host: {db_host}")
 print(f"User: {db_user}")
 print(f"Database: {db_name}")
 print("=" * 50)
 
-# ── FIX 2: Use a connection pool instead of a single global connection.
-#    This avoids the "connection closed after first request" bug.
+
 connection_pool = None
 
 
 def init_pool(max_retries=10, retry_delay=5):
-    """Create the DB + table, then build a connection pool."""
     global connection_pool
 
     for attempt in range(max_retries):
         try:
-            print(f"\n🔄 DB Attempt {attempt + 1}/{max_retries}")
+            print(f"DB Attempt {attempt + 1}/{max_retries}")
 
-            # 1. Bootstrap: create the database if it doesn't exist
+            #  Bootstrap: create the database if it doesn't exist
             bootstrap = mysql.connector.connect(
                 host=db_host, user=db_user, password=db_password,
                 connect_timeout=30, autocommit=True
@@ -52,9 +50,9 @@ def init_pool(max_retries=10, retry_delay=5):
             cur.execute(f"CREATE DATABASE IF NOT EXISTS `{db_name}`")
             cur.close()
             bootstrap.close()
-            print(f"✅ Database '{db_name}' created/verified")
+            print(f" Database '{db_name}' created/verified")
 
-            # 2. Create the table
+            #  Create the table
             setup = mysql.connector.connect(
                 host=db_host, user=db_user, password=db_password,
                 database=db_name, connect_timeout=30, autocommit=True
@@ -73,9 +71,9 @@ def init_pool(max_retries=10, retry_delay=5):
             """)
             cur.close()
             setup.close()
-            print("✅ Table 'contact_queries' created/verified")
+            print(" Table 'contact_queries' created/verified")
 
-            # 3. Build the pool
+            #  Build the pool
             connection_pool = pooling.MySQLConnectionPool(
                 pool_name="transolux_pool",
                 pool_size=5,
@@ -86,40 +84,38 @@ def init_pool(max_retries=10, retry_delay=5):
                 connect_timeout=30,
                 autocommit=True
             )
-            print("✅ Connection pool created (size=5)")
+            print(" Connection pool created (size=5)")
             print("=" * 50)
             return True
 
         except Error as e:
-            print(f"❌ DB error: {e}")
+            print(f" DB error: {e}")
             if attempt < max_retries - 1:
-                print(f"⏳ Retry in {retry_delay}s …")
+                print(f" Retry in {retry_delay}s …")
                 time.sleep(retry_delay)
 
-    print("❌ All DB attempts exhausted!")
+    print(" All DB attempts exhausted!")
     return False
 
 
 def get_db():
-    """Get a connection from the pool. Raises RuntimeError if pool is unavailable."""
     if connection_pool is None:
         raise RuntimeError("Database pool not initialised")
     return connection_pool.get_connection()
 
 
-print("\n🚀 Starting Flask Application…")
+print("\n Starting Flask Application…")
 if not init_pool():
-    print("\n⚠️  WARNING: DB init failed — DB features won't work.")
+    print("\n WARNING: DB init failed — DB features won't work.")
 else:
-    print("\n🎉 Application started successfully!")
+    print("\n Application started successfully!")
 
 
-# ── AUTH DECORATOR ────────────────────────────────────────────────────────────
+#  AUTH DECORATOR 
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if 'admin_logged_in' not in session:
-            # Return JSON 401 for API routes so JS can handle it properly
             if request.path.startswith('/admin/api/'):
                 return jsonify({"error": "Session expired. Please log in again.", "redirect": "/admin/login"}), 401
             return redirect(url_for('admin_login'))
@@ -127,14 +123,14 @@ def login_required(f):
     return decorated
 
 
-# ── PUBLIC ROUTES ─────────────────────────────────────────────────────────────
+#  PUBLIC ROUTES 
 
 @app.route('/')
 def index():
     try:
         return send_from_directory(app.static_folder, 'index.html')
     except Exception as e:
-        print(f"❌ Error serving index.html: {e}")
+        print(f" Error serving index.html: {e}")
         return f"Error: {e}", 500
 
 
@@ -160,7 +156,7 @@ def submit():
         phone   = request.form.get('phone',   '').strip()
         message = request.form.get('message', '').strip()
 
-        print(f"\n📝 New submission: {name} ({email})")
+        print(f"New submission: {name} ({email})")
 
         if not name or not email or not message:
             return redirect('/?error=' + quote('Please fill in all required fields.'))
@@ -173,24 +169,24 @@ def submit():
             "INSERT INTO contact_queries (name, email, phone, message) VALUES (%s, %s, %s, %s)",
             (name, email, phone, message)
         )
-        print(f"✅ Saved! ID: {cur.lastrowid}")
+        print(f" Saved! ID: {cur.lastrowid}")
         cur.close()
         conn.close()
 
         return redirect('/?success=' + quote('✓ Thank you! We will contact you soon.'))
 
     except RuntimeError as e:
-        print(f"❌ Pool error: {e}")
+        print(f" Pool error: {e}")
         return redirect('/?error=' + quote('Service temporarily unavailable. Please try again later.'))
     except Error as e:
-        print(f"❌ DB error: {e}")
+        print(f" DB error: {e}")
         return redirect('/?error=' + quote('Error submitting form. Please try again.'))
     except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        print(f" Unexpected error: {e}")
         return redirect('/?error=' + quote('An unexpected error occurred. Please try again.'))
 
 
-# ── ADMIN ROUTES ──────────────────────────────────────────────────────────────
+#  ADMIN ROUTES
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -284,7 +280,7 @@ def admin_logout():
     return redirect(url_for('admin_login'))
 
 
-# ── ERROR HANDLERS ────────────────────────────────────────────────────────────
+#  ERROR HANDLERS 
 
 @app.errorhandler(404)
 def not_found(e):
@@ -295,11 +291,10 @@ def server_error(e):
     return render_template('500.html'), 500
 
 
-# ── FIX 3: Do NOT close pool connections in teardown.
-#    Each route already calls conn.close() which returns it to the pool.
+
 
 if __name__ == '__main__':
-    print("\n🌐 Starting Flask server on http://0.0.0.0:5000")
-    print("📊 Admin panel: http://localhost:5000/admin")
-    print("❤️  Health check: http://localhost:5000/health")
+    print("\n Starting Flask server on http://0.0.0.0:5000")
+    print(" Admin panel: http://localhost:5000/admin")
+    print("  Health check: http://localhost:5000/health")
     app.run(host='0.0.0.0', port=5000, debug=True)
