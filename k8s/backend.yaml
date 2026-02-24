@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-backend
+  namespace: transolux
+  labels:
+    app: flask-backend
+spec:
+  replicas: 2        # Scale horizontally — stateless Flask handles this fine
+  selector:
+    matchLabels:
+      app: flask-backend
+  template:
+    metadata:
+      labels:
+        app: flask-backend
+    spec:
+      initContainers:
+        # Wait for MySQL to be ready before Flask starts
+        - name: wait-for-mysql
+          image: busybox:1.35
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z mysql 3306; do
+                echo "Waiting for MySQL..."
+                sleep 3
+              done
+              echo "MySQL is up!"
+      containers:
+        - name: flask-backend
+          # ⚠️ Replace with your actual Docker image (push to DockerHub/ECR/GCR first)
+          # Example: docker build -t youruser/transolux-backend:latest ./app-layer
+          #          docker push youruser/transolux-backend:latest
+          image: ujwalnagrikar/transolux-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: DB_HOST
+              value: "mysql"          # Matches the MySQL Service name
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: transolux-secrets
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: transolux-secrets
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: transolux-secrets
+                  key: DB_NAME
+            - name: FLASK_ENV
+              value: "production"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend         # Nginx config references "backend:5000" → must match
+  namespace: transolux
+  labels:
+    app: flask-backend
+spec:
+  selector:
+    app: flask-backend
+  ports:
+    - port: 5000
+      targetPort: 5000
+  type: ClusterIP

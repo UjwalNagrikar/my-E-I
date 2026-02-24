@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-frontend
+  namespace: transolux
+  labels:
+    app: nginx-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-frontend
+  template:
+    metadata:
+      labels:
+        app: nginx-frontend
+    spec:
+      containers:
+        - name: nginx-frontend
+          # ⚠️ Replace with your actual Docker image
+          # Example: docker build -t youruser/transolux-frontend:latest ./static
+          #          docker push youruser/transolux-frontend:latest
+          image: ujwalnagrikar/transolux-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "150m"
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-frontend
+  namespace: transolux
+  labels:
+    app: nginx-frontend
+spec:
+  selector:
+    app: nginx-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+  # Use LoadBalancer for cloud (AWS/GKE/AKS) or NodePort for Minikube
+  type: LoadBalancer
+  # For Minikube, change to:
+  # type: NodePort
