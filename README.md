@@ -1,6 +1,3 @@
-i deploy multi tier application in k8s which auto scale 300% under 3 second 
-
-------------------------------------------------------------------------------------
 
 
 # 🌐 Transolux Enterprises — Full-Stack Web Application
