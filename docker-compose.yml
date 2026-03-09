@@ -1,74 +1,105 @@
-version: "3.8"
+version: "3.9"
+
 services:
+
   mysql:
     image: mysql:8.0
-    container_name: mysql_db
-    restart: always
+    container_name: transolux_mysql
+    restart: unless-stopped
+
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: mywebsite
-      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_HOST: "%"
+
     ports:
       - "3306:3306"
+
     volumes:
       - mysql_data:/var/lib/mysql
+
     networks:
       - app-network
+
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=rootpassword"]
       interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 30s
-    command: --default-authentication-plugin=mysql_native_password
+      retries: 20
+      start_period: 40s
+
 
   backend:
     build:
       context: ./app-layer
       dockerfile: Dockerfile
-    container_name: flask-backend
-    restart: always
+
+    container_name: transolux_backend
+    restart: unless-stopped
+
     ports:
       - "5000:5000"
+
     environment:
       DB_HOST: mysql
       DB_USER: root
       DB_PASSWORD: rootpassword
       DB_NAME: mywebsite
-      FLASK_ENV: development
+      FLASK_ENV: production
+      ADMIN_USERNAME: ujwal
+      ADMIN_PASSWORD: ujwal9494
+      FLASK_SECRET_KEY: transolux-secret-change-me
+
     depends_on:
       mysql:
         condition: service_healthy
+
     networks:
       - app-network
+
     volumes:
-      - ./app-layer:/app
-      - ./static:/app/static
+      - ./static:/app/static:ro
+
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      # Using python instead of curl (works even if curl not installed)
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 30s
+      retries: 10
+      start_period: 60s
+
 
   frontend:
     build:
       context: ./static
       dockerfile: Dockerfile
-    container_name: nginx-frontend
-    restart: always
+
+    container_name: transolux_frontend
+    restart: unless-stopped
+
     ports:
       - "80:80"
+
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+
     networks:
       - app-network
+
     volumes:
       - ./static:/usr/share/nginx/html:ro
+
 
 networks:
   app-network:
     driver: bridge
+
 
 volumes:
   mysql_data:

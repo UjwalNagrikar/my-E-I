@@ -1,738 +1,1091 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transolux Enterprises - Global Trade Solutions</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        /* ── Country Code Phone Field ── */
-        .phone-input-group {
-            display: flex;
-            align-items: stretch;
-            background: #f8faff;
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-        .phone-input-group:focus-within {
-            border-color: var(--blue);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(26,108,240,0.07);
-        }
-        .country-select-wrap {
-            position: relative;
-            display: flex;
-            align-items: center;
-            border-right: 1.5px solid var(--border);
-            background: rgba(26,108,240,0.04);
-            flex-shrink: 0;
-            transition: background 0.3s;
-        }
-        .phone-input-group:focus-within .country-select-wrap {
-            background: rgba(26,108,240,0.06);
-        }
-        .country-flag {
-            position: absolute;
-            left: 10px;
-            font-size: 1.1rem;
-            pointer-events: none;
-            z-index: 1;
-        }
-        .country-select {
-            appearance: none;
-            -webkit-appearance: none;
-            border: none;
-            outline: none;
-            background: transparent;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--dark);
-            cursor: pointer;
-            padding: 0.8rem 1.6rem 0.8rem 2.4rem;
-            min-width: 120px;
-            position: relative;
-            z-index: 2;
-        }
-        .country-chevron {
-            position: absolute;
-            right: 8px;
-            font-size: 0.65rem;
-            color: var(--muted);
-            pointer-events: none;
-        }
-        .phone-number-input {
-            flex: 1;
-            border: none;
-            outline: none;
-            background: transparent;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            color: var(--dark);
-            padding: 0.8rem 0.8rem 0.8rem 0.6rem;
-        }
-        .phone-number-input::placeholder { color: #b0bec5; }
-        .phone-required-note {
-            font-size: 0.72rem;
-            color: var(--blue);
-            font-weight: 500;
-            margin-top: 0.35rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transolux Enterprises — Global Trade Solutions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+  /* ═══════════════════════════════════════════════
+     RESET & TOKENS
+  ═══════════════════════════════════════════════ */
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --navy:        #07152b;
+    --navy-mid:    #0d2240;
+    --blue:        #1660e8;
+    --blue-light:  #3d82f8;
+    --blue-pale:   #eef4ff;
+    --teal:        #0891b2;
+    --green:       #059669;
+    --green-light: #10b981;
+    --green-pale:  #ecfdf5;
+    --gold:        #d97706;
+    --text:        #1e293b;
+    --muted:       #64748b;
+    --border:      #e1eaf8;
+    --white:       #ffffff;
+    --bg:          #f8faff;
+    --grad:        linear-gradient(135deg, #1660e8 0%, #0891b2 55%, #059669 100%);
+    --grad-warm:   linear-gradient(135deg, #1660e8, #0891b2);
+    --shadow-xs:   0 1px 4px rgba(22,96,232,0.08);
+    --shadow-sm:   0 2px 16px rgba(22,96,232,0.09);
+    --shadow-md:   0 8px 36px rgba(22,96,232,0.13);
+    --shadow-lg:   0 20px 64px rgba(22,96,232,0.16);
+    --radius:      20px;
+    --font-head:   'Sora', sans-serif;
+    --font-body:   'DM Sans', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--white);
+    overflow-x: hidden;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ═══════════════════════════════════════════════
+     UTILITIES
+  ═══════════════════════════════════════════════ */
+  .container { max-width: 1240px; margin: 0 auto; padding: 0 2rem; }
+  .grad-text {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .tag {
+    display: inline-flex; align-items: center; gap: .45rem;
+    padding: .3rem 1rem;
+    background: var(--blue-pale); color: var(--blue);
+    border: 1px solid rgba(22,96,232,.15);
+    border-radius: 25px;
+    font-family: var(--font-head);
+    font-size: .72rem; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase;
+    margin-bottom: 1.1rem;
+  }
+  .reveal { opacity:0; transform:translateY(32px); transition: opacity .75s ease, transform .75s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  /* ═══════════════════════════════════════════════
+     HEADER
+  ═══════════════════════════════════════════════ */
+  #mainHeader {
+    position: fixed; top:0; left:0; right:0; z-index:1000;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border);
+    transition: all .3s;
+  }
+  #mainHeader.scrolled {
+    background: rgba(255,255,255,0.98);
+    box-shadow: var(--shadow-sm);
+  }
+  nav {
+    max-width: 1240px; margin: 0 auto; padding: 0 2rem;
+    height: 72px; display: flex; align-items: center; gap: 1.5rem;
+  }
+  .logo { display:flex; align-items:center; gap:.75rem; text-decoration:none; flex-shrink:0; }
+  .logo-mark {
+    width:40px; height:40px; background: var(--grad);
+    border-radius:11px; display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 4px 16px rgba(22,96,232,.3);
+  }
+  .logo-mark span { color:#fff; font-family:var(--font-head); font-weight:800; font-size:1.25rem; }
+  .logo-text { line-height:1.15; }
+  .lt-main { display:block; font-family:var(--font-head); font-size:1.1rem; font-weight:800; color:var(--navy); letter-spacing:-.3px; }
+  .lt-sub  { display:block; font-size:.5rem; font-weight:600; letter-spacing:2.5px; color:var(--muted); text-transform:uppercase; }
+
+  .nav-links { display:flex; list-style:none; gap:.2rem; margin-left:auto; }
+  .nav-links a {
+    color:var(--muted); text-decoration:none;
+    font-size:.88rem; font-weight:500;
+    padding:.4rem .9rem; border-radius:8px;
+    transition: all .2s;
+  }
+  .nav-links a:hover, .nav-links a.active { color:var(--blue); background:var(--blue-pale); }
+
+  .nav-cta {
+    background: var(--grad); color:#fff;
+    text-decoration:none; padding:.5rem 1.4rem;
+    border-radius:25px; font-size:.875rem; font-weight:600;
+    white-space:nowrap; transition: all .3s;
+    box-shadow: 0 4px 16px rgba(22,96,232,.28);
+    font-family: var(--font-head);
+  }
+  .nav-cta:hover { transform:translateY(-2px); box-shadow: 0 8px 28px rgba(22,96,232,.38); }
+
+  .mobile-toggle { display:none; flex-direction:column; gap:5px; cursor:pointer; margin-left:auto; }
+  .mobile-toggle span { width:24px; height:2px; background:var(--navy); border-radius:2px; transition: all .3s; }
+
+  /* ═══════════════════════════════════════════════
+     BUTTONS
+  ═══════════════════════════════════════════════ */
+  .btn {
+    display:inline-flex; align-items:center; gap:.5rem;
+    padding:.8rem 2rem; border-radius:50px;
+    font-family:var(--font-head); font-size:.92rem; font-weight:600;
+    text-decoration:none; border:none; cursor:pointer; transition: all .3s;
+  }
+  .btn-primary {
+    background: var(--grad); color:#fff;
+    box-shadow: 0 6px 22px rgba(22,96,232,.32);
+  }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow: 0 12px 32px rgba(22,96,232,.42); }
+  .btn-outline {
+    background:transparent; color:var(--blue);
+    border: 2px solid var(--blue);
+  }
+  .btn-outline:hover { background:var(--blue-pale); transform:translateY(-2px); }
+  .btn-white {
+    background:#fff; color:var(--blue);
+    box-shadow: 0 4px 20px rgba(0,0,0,.1);
+  }
+  .btn-white:hover { background:var(--blue-pale); transform:translateY(-2px); }
+  .btn-full { width:100%; justify-content:center; }
+
+  /* ═══════════════════════════════════════════════
+     SECTION HEADERS
+  ═══════════════════════════════════════════════ */
+  section { padding: 6rem 0; }
+  .sec-header { text-align:center; margin-bottom:3.5rem; }
+  .sec-header h2 {
+    font-family:var(--font-head);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight:800; color:var(--navy);
+    line-height:1.12; letter-spacing:-.5px;
+    margin-bottom:.9rem;
+  }
+  .sec-header p { color:var(--muted); font-size:1.02rem; max-width:540px; margin:0 auto; }
+
+  /* ═══════════════════════════════════════════════
+     FLASH MESSAGES
+  ═══════════════════════════════════════════════ */
+  .flash-messages-container {
+    position:fixed; top:88px; right:20px; z-index:9999;
+    max-width:380px; width:90%;
+  }
+  .flash-message {
+    background:#fff; border-radius:14px;
+    padding:1rem 1.2rem; margin-bottom:.75rem;
+    display:flex; align-items:center; gap:.8rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,.12);
+    border-left: 4px solid var(--blue);
+    animation: flashIn .4s cubic-bezier(.16,1,.3,1);
+  }
+  .flash-message.success { border-left-color: var(--green-light); }
+  .flash-message.error   { border-left-color: #ef4444; }
+  .flash-icon   { font-size:1.2rem; flex-shrink:0; }
+  .flash-content { flex:1; font-size:.88rem; color:var(--text); font-weight:500; line-height:1.5; }
+  .flash-close  { background:none; border:none; color:var(--muted); font-size:1.2rem; cursor:pointer; padding:0; line-height:1; transition:color .2s; }
+  .flash-close:hover { color:var(--text); }
+  @keyframes flashIn { from { transform:translateX(110%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+
+  /* ═══════════════════════════════════════════════
+     HERO
+  ═══════════════════════════════════════════════ */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 100px 2rem 60px;
+    position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #f0f6ff 0%, #e8f8f2 50%, #f5f9ff 100%);
+  }
+
+  /* Ambient blobs */
+  .hero-blob {
+    position:absolute; border-radius:50%;
+    filter:blur(90px); pointer-events:none; opacity:.55;
+  }
+  .blob-1 { width:700px; height:700px; background:radial-gradient(circle, rgba(22,96,232,.12), transparent 70%); top:-200px; right:-100px; animation: blobFloat 10s ease-in-out infinite; }
+  .blob-2 { width:500px; height:500px; background:radial-gradient(circle, rgba(5,150,105,.1), transparent 70%);  bottom:-150px; left:5%; animation: blobFloat 13s ease-in-out infinite reverse; }
+  .blob-3 { width:300px; height:300px; background:radial-gradient(circle, rgba(8,145,178,.08), transparent 70%); top:35%; left:35%; animation: blobFloat 8s ease-in-out infinite; }
+  @keyframes blobFloat { 0%,100% { transform: scale(1) translate(0,0); } 50% { transform: scale(1.1) translate(30px,-20px); } }
+
+  /* Grid texture overlay */
+  .hero::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background-image: linear-gradient(rgba(22,96,232,.04) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(22,96,232,.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .hero-inner {
+    position:relative; z-index:1;
+    max-width:1240px; margin:0 auto; width:100%;
+    display:flex; align-items:center; gap:5rem;
+  }
+  .hero-left { flex:1; max-width:580px; }
+  .hero-right { flex:1; display:flex; justify-content:center; align-items:center; }
+
+  .hero-eyebrow {
+    display:inline-flex; align-items:center; gap:.5rem;
+    padding:.35rem 1rem; background:#fff;
+    border:1px solid var(--border); border-radius:25px;
+    font-size:.82rem; color:var(--muted); font-weight:500;
+    margin-bottom:1.5rem; box-shadow:var(--shadow-xs);
+  }
+  .eyebrow-dot {
+    width:7px; height:7px; background:var(--green-light);
+    border-radius:50%; flex-shrink:0;
+    animation: edot 2.2s ease-in-out infinite;
+  }
+  @keyframes edot { 0%,100% { box-shadow:0 0 0 0 rgba(16,185,129,.5); } 50% { box-shadow:0 0 0 6px rgba(16,185,129,0); } }
+
+  .hero-left h1 {
+    font-family:var(--font-head);
+    font-size: clamp(2.6rem, 5vw, 4.4rem);
+    font-weight:800; color:var(--navy);
+    line-height:1.08; letter-spacing:-.8px;
+    margin-bottom:1.4rem;
+  }
+  .hero-left h1 em { font-style:normal; display:block; }
+  .hero-left > p {
+    color:var(--muted); font-size:1.05rem; line-height:1.8;
+    max-width:480px; margin-bottom:2rem;
+  }
+  .hero-actions { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:2.5rem; }
+
+  .hero-trust {
+    display:flex; gap:.75rem; flex-wrap:wrap;
+  }
+  .ht-item {
+    display:flex; align-items:center; gap:.45rem;
+    padding:.38rem .9rem; background:#fff;
+    border:1px solid var(--border); border-radius:25px;
+    font-size:.8rem; color:var(--text); font-weight:500;
+    box-shadow:var(--shadow-xs); transition: all .3s;
+  }
+  .ht-item:hover { border-color:rgba(22,96,232,.25); transform:translateY(-2px); }
+
+  /* Globe visual */
+  .hero-globe {
+    width:380px; height:380px; position:relative;
+    flex-shrink:0;
+  }
+  .globe-card {
+    width:100%; height:100%; background:#fff;
+    border-radius:36px; border:1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .globe-card::before {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(135deg, rgba(22,96,232,.03), rgba(5,150,105,.03));
+  }
+  .globe-core {
+    width:160px; height:160px; border-radius:50%;
+    border:1.5px solid rgba(22,96,232,.12);
+    display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(135deg, rgba(22,96,232,.05), rgba(5,150,105,.05));
+    position:relative; animation: globePulse 4s ease-in-out infinite;
+  }
+  @keyframes globePulse {
+    0%,100% { transform:scale(1); box-shadow:0 0 0 0 rgba(22,96,232,.15); }
+    50%      { transform:scale(1.04); box-shadow:0 0 0 22px rgba(22,96,232,0); }
+  }
+  .globe-emoji { font-size:3.2rem; }
+  .globe-ring {
+    position:absolute; border-radius:50%;
+    border:1px dashed rgba(22,96,232,.14);
+  }
+  .gr1 { width:220px; height:220px; animation: rspin 7s linear infinite; }
+  .gr2 { width:280px; height:280px; animation: rspin 11s linear infinite reverse; }
+  .gr3 { width:340px; height:340px; animation: rspin 15s linear infinite; }
+  @keyframes rspin { to { transform:rotate(360deg); } }
+  .ring-icon {
+    position:absolute; top:-13px; left:50%;
+    transform:translateX(-50%); font-size:1.3rem;
+  }
+
+  .globe-float {
+    position:absolute; background:#fff;
+    border:1px solid var(--border); border-radius:14px;
+    padding:.6rem 1rem; display:flex; align-items:center; gap:.6rem;
+    box-shadow:var(--shadow-md); font-size:.8rem; font-weight:600;
+    color:var(--text); white-space:nowrap;
+    animation: floatY 4s ease-in-out infinite;
+  }
+  .gf1 { top:12%; left:-16%; animation-delay:0s; }
+  .gf2 { bottom:18%; right:-14%; animation-delay:-2s; }
+  @keyframes floatY { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-9px); } }
+
+  /* ═══════════════════════════════════════════════
+     SERVICES / PRODUCTS
+  ═══════════════════════════════════════════════ */
+  .services { background:#fafcff; }
+  .products-grid {
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));
+    gap:1.8rem; margin-bottom:2.5rem;
+  }
+  .product-card {
+    background:#fff; border:1px solid var(--border);
+    border-radius:var(--radius); padding:2rem;
+    position:relative; overflow:hidden;
+    transition: all .4s cubic-bezier(.16,1,.3,1); cursor:pointer;
+  }
+  .pc-stripe {
+    position:absolute; top:0; left:0; right:0; height:3px;
+    background:var(--grad); transform:scaleX(0); transform-origin:left;
+    transition: transform .4s ease;
+  }
+  .product-card:hover .pc-stripe { transform:scaleX(1); }
+  .product-card:hover { transform:translateY(-8px); box-shadow:var(--shadow-lg); border-color:rgba(22,96,232,.1); }
+  .pc-icon-wrap { width:68px; height:68px; position:relative; margin-bottom:1.4rem; }
+  .pc-icon-bg {
+    position:absolute; inset:0; border-radius:16px;
+    background: linear-gradient(135deg, var(--blue-pale), var(--green-pale));
+    transition: all .3s;
+  }
+  .product-card:hover .pc-icon-bg { background:var(--grad); }
+  .pc-icon {
+    position:relative; z-index:1; font-size:2.1rem;
+    display:flex; align-items:center; justify-content:center;
+    width:100%; height:100%;
+    animation: iconBob 3s ease-in-out infinite;
+  }
+  @keyframes iconBob { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
+  .product-card h3 {
+    font-family:var(--font-head); font-size:1.15rem; font-weight:700;
+    color:var(--navy); margin-bottom:.9rem; transition: color .3s;
+  }
+  .product-card:hover h3 { color:var(--blue); }
+  .product-card p { color:var(--muted); font-size:.93rem; line-height:1.75; margin-bottom:1.4rem; }
+  .product-list { list-style:none; margin-bottom:1.4rem; }
+  .product-list li {
+    padding:.42rem 0 .42rem 1.4rem; color:var(--muted);
+    position:relative; font-size:.92rem;
+    border-bottom:1px solid var(--border); transition:color .2s;
+  }
+  .product-list li:last-child { border:none; }
+  .product-list li::before {
+    content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
+    width:7px; height:7px; background:var(--grad); border-radius:50%;
+  }
+  .product-card:hover .product-list li { color:var(--text); }
+  .pc-badge {
+    display:inline-block; padding:.28rem .85rem;
+    background:var(--green-pale); color:var(--green);
+    border:1px solid rgba(5,150,105,.2); border-radius:20px;
+    font-size:.74rem; font-weight:600;
+  }
+
+  .trade-banner {
+    background:var(--grad); border-radius:var(--radius);
+    padding:2rem 2.5rem;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:2rem; flex-wrap:wrap;
+  }
+  .tb-left { display:flex; align-items:center; gap:1.4rem; }
+  .tb-icon { font-size:2.4rem; flex-shrink:0; }
+  .tb-left strong { display:block; color:#fff; font-family:var(--font-head); font-size:1.05rem; font-weight:700; margin-bottom:.25rem; }
+  .tb-left p { color:rgba(255,255,255,.82); font-size:.87rem; }
+
+  /* ═══════════════════════════════════════════════
+     WHY US
+  ═══════════════════════════════════════════════ */
+  .why { background:#fff; }
+  .why-grid {
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+    gap:1.4rem;
+  }
+  .why-card {
+    background:#fafcff; border:1px solid var(--border);
+    border-radius:var(--radius); padding:1.8rem;
+    position:relative; overflow:hidden; transition: all .3s;
+  }
+  .why-card:hover { border-color:rgba(22,96,232,.2); transform:translateY(-5px); box-shadow:var(--shadow-md); background:#fff; }
+  .wc-num {
+    font-family:var(--font-head); font-size:3.8rem; font-weight:900;
+    color:rgba(22,96,232,.05); position:absolute; top:.3rem; right:.9rem; line-height:1; pointer-events:none;
+  }
+  .wc-icon {
+    font-size:1.7rem; display:inline-flex; align-items:center; justify-content:center;
+    width:50px; height:50px; background:var(--blue-pale); border-radius:13px;
+    margin-bottom:.9rem; transition: all .3s;
+  }
+  .why-card:hover .wc-icon { background:var(--grad); transform:scale(1.08); }
+  .why-card h3 {
+    font-family:var(--font-head); font-size:.97rem; font-weight:700;
+    color:var(--navy); margin-bottom:.5rem; transition: color .3s;
+  }
+  .why-card:hover h3 { color:var(--blue); }
+  .why-card p { color:var(--muted); font-size:.86rem; line-height:1.7; }
+  .wc-bar {
+    margin-top:1.4rem; height:2px; background:var(--grad); border-radius:2px;
+    transform:scaleX(0); transform-origin:left; transition: transform .4s ease;
+  }
+  .why-card:hover .wc-bar { transform:scaleX(1); }
+
+  /* ═══════════════════════════════════════════════
+     ABOUT
+  ═══════════════════════════════════════════════ */
+  .about {
+    background:#fafcff; position:relative; overflow:hidden;
+  }
+  .about-bg {
+    position:absolute; right:-250px; top:-200px;
+    width:700px; height:700px;
+    background:radial-gradient(circle, rgba(5,150,105,.05), transparent 70%);
+    border-radius:50%; pointer-events:none;
+  }
+  .about-flex {
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:5rem; align-items:center;
+  }
+  .about-visual { position:relative; }
+  .av-card {
+    background:#fff; border:1px solid var(--border);
+    border-radius:24px; overflow:hidden; box-shadow:var(--shadow-lg);
+  }
+  .av-map {
+    height:230px;
+    background:linear-gradient(135deg, var(--blue-pale) 0%, var(--green-pale) 100%);
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .map-globe { font-size:6.5rem; opacity:.22; animation: mapSpin 8s ease-in-out infinite; }
+  @keyframes mapSpin { 0%,100% { transform:scale(1) rotate(-2deg); } 50% { transform:scale(1.05) rotate(2deg); } }
+  .map-pin { position:absolute; font-size:1.7rem; animation: pinPop 2.8s ease-in-out infinite; filter:drop-shadow(0 3px 6px rgba(0,0,0,.15)); }
+  .mp1 { top:28%; left:22%; animation-delay:0s; }
+  .mp2 { top:18%; right:22%; animation-delay:-1s; }
+  .mp3 { bottom:22%; left:52%; animation-delay:-2s; }
+  @keyframes pinPop { 0%,100% { transform:translateY(0) scale(1); } 50% { transform:translateY(-8px) scale(1.1); } }
+  .av-info { display:flex; align-items:center; padding:1.1rem 1.8rem; }
+  .av-stat { flex:1; text-align:center; }
+  .av-stat strong { display:block; color:var(--navy); font-family:var(--font-head); font-weight:700; font-size:.92rem; }
+  .av-stat span { font-size:.76rem; color:var(--muted); }
+  .av-divider { width:1px; height:38px; background:var(--border); }
+  .av-badge {
+    position:absolute; background:#fff; border:1px solid var(--border);
+    border-radius:25px; padding:.45rem .95rem;
+    font-size:.76rem; font-weight:600; color:var(--text);
+    box-shadow:var(--shadow-md); animation: floatY 4s ease-in-out infinite;
+  }
+  .ab1 { top:-12px; right:-6px; animation-delay:0s; }
+  .ab2 { bottom:72px; left:-20px; animation-delay:-2s; }
+  .about-text .tag { display:inline-block; }
+  .about-text h2 {
+    font-family:var(--font-head);
+    font-size: clamp(1.9rem, 3vw, 2.7rem);
+    font-weight:800; color:var(--navy);
+    letter-spacing:-.4px; margin-bottom:1.3rem; line-height:1.2; text-align:left;
+  }
+  .about-text p { color:var(--muted); margin-bottom:1rem; line-height:1.8; font-size:.97rem; }
+  .about-pills { display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1.8rem; }
+  .about-pills span {
+    padding:.36rem .9rem; background:var(--blue-pale); color:var(--blue);
+    border-radius:25px; font-size:.78rem; font-weight:600;
+    border:1px solid rgba(22,96,232,.12); transition: all .3s; cursor:default;
+  }
+  .about-pills span:hover { background:var(--blue); color:#fff; transform:translateY(-2px); }
+
+  /* ═══════════════════════════════════════════════
+     CONTACT
+  ═══════════════════════════════════════════════ */
+  .contact { background:#fff; }
+  .contact-flex { display:grid; grid-template-columns:1fr 1.6fr; gap:3.5rem; align-items:start; }
+
+  .cl-card {
+    background:#fafcff; border:1px solid var(--border);
+    border-radius:var(--radius); padding:1.7rem; margin-bottom:1.4rem;
+  }
+  .contact-item {
+    display:flex; align-items:center; gap:.9rem;
+    padding:1rem 0; border-bottom:1px solid var(--border); transition: all .3s;
+  }
+  .contact-item:last-child { border:none; padding-bottom:0; }
+  .contact-item:hover { transform:translateX(5px); }
+  .ci-icon {
+    font-size:1.2rem; width:42px; height:42px;
+    background:var(--blue-pale); border-radius:11px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition: all .3s;
+  }
+  .contact-item:hover .ci-icon { background:var(--grad); }
+  .ci-body h4 { font-family:var(--font-head); font-size:.73rem; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-bottom:.15rem; }
+  .ci-body p  { color:var(--navy); font-weight:600; font-size:.9rem; }
+
+  .cl-note {
+    background:linear-gradient(135deg, var(--blue-pale), var(--green-pale));
+    border:1px solid var(--border); border-radius:var(--radius);
+    padding:1.4rem; display:flex; gap:.9rem; align-items:flex-start;
+  }
+  .cn-icon { font-size:1.9rem; flex-shrink:0; }
+  .cl-note strong { display:block; color:var(--navy); font-family:var(--font-head); font-weight:700; font-size:.92rem; margin-bottom:.3rem; }
+  .cl-note p { color:var(--muted); font-size:.83rem; line-height:1.6; }
+
+  /* Form */
+  .contact-form {
+    background:#fff; border:1px solid var(--border);
+    border-radius:28px; padding:2.5rem;
+    box-shadow:var(--shadow-md); position:relative; overflow:hidden;
+  }
+  .contact-form::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:4px;
+    background:var(--grad);
+  }
+  .form-header { margin-bottom:1.8rem; }
+  .form-header h3 { font-family:var(--font-head); font-size:1.2rem; font-weight:800; color:var(--navy); margin-bottom:.25rem; }
+  .form-header p  { color:var(--muted); font-size:.84rem; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; }
+  .form-group { margin-bottom:1.1rem; }
+  .form-group label { display:block; font-size:.8rem; font-weight:600; color:var(--text); margin-bottom:.45rem; font-family:var(--font-head); }
+  .req { color:#ef4444; font-size:.72rem; font-weight:600; margin-left:3px; }
+
+  .input-box {
+    display:flex; align-items:center;
+    background:#f8faff; border:1.5px solid var(--border);
+    border-radius:11px; overflow:hidden; transition: all .3s;
+  }
+  .input-box:focus-within {
+    border-color:var(--blue); background:#fff;
+    box-shadow: 0 0 0 3px rgba(22,96,232,.07);
+  }
+  .ib-icon { padding:0 .8rem; font-size:.95rem; flex-shrink:0; }
+  .input-box input, .input-box textarea {
+    flex:1; border:none; outline:none; background:transparent;
+    padding:.78rem .78rem .78rem 0; font-size:.9rem; color:var(--navy);
+    font-family:var(--font-body);
+  }
+  .input-box input::placeholder, .input-box textarea::placeholder { color:#b0bec5; }
+  .ib-ta { align-items:flex-start; }
+  .ib-ta .ib-icon { padding-top:.85rem; }
+  .input-box textarea { min-height:130px; resize:none; padding-top:.78rem; }
+
+  /* Phone compound input */
+  .phone-wrap {
+    display:flex; align-items:stretch;
+    background:#f8faff; border:1.5px solid var(--border);
+    border-radius:11px; overflow:hidden; transition: all .3s;
+  }
+  .phone-wrap:focus-within {
+    border-color:var(--blue); background:#fff;
+    box-shadow: 0 0 0 3px rgba(22,96,232,.07);
+  }
+  .cc-wrap {
+    position:relative; display:flex; align-items:center;
+    border-right:1.5px solid var(--border);
+    background:rgba(22,96,232,.03); flex-shrink:0; transition:background .3s;
+  }
+  .phone-wrap:focus-within .cc-wrap { background:rgba(22,96,232,.05); }
+  .cc-flag { position:absolute; left:10px; font-size:1.05rem; pointer-events:none; z-index:1; }
+  .cc-select {
+    appearance:none; -webkit-appearance:none;
+    border:none; outline:none; background:transparent;
+    font-family:var(--font-body); font-size:.8rem; font-weight:600; color:var(--navy);
+    cursor:pointer; padding:.78rem 1.5rem .78rem 2.3rem; min-width:115px;
+    position:relative; z-index:2;
+  }
+  .cc-chevron { position:absolute; right:7px; font-size:.6rem; color:var(--muted); pointer-events:none; }
+  .phone-number {
+    flex:1; border:none; outline:none; background:transparent;
+    font-family:var(--font-body); font-size:.9rem; color:var(--navy);
+    padding:.78rem .78rem .78rem .55rem;
+  }
+  .phone-number::placeholder { color:#b0bec5; }
+  .phone-note {
+    font-size:.71rem; color:var(--blue); font-weight:500;
+    margin-top:.32rem; display:flex; align-items:center; gap:.28rem;
+  }
+
+  /* ═══════════════════════════════════════════════
+     FOOTER
+  ═══════════════════════════════════════════════ */
+  footer { background:var(--navy); padding:3rem 0 0; }
+  .footer-inner {
+    display:flex; align-items:center; justify-content:space-between;
+    gap:2rem; flex-wrap:wrap;
+    padding-bottom:2rem; border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .footer-brand .lt-main { color:#fff; }
+  .footer-brand .lt-sub  { color:rgba(255,255,255,.3); }
+  .footer-brand p { color:rgba(255,255,255,.38); font-size:.83rem; margin-top:.7rem; max-width:270px; }
+  .footer-links { display:flex; gap:1.5rem; flex-wrap:wrap; }
+  .footer-links a { color:rgba(255,255,255,.42); text-decoration:none; font-size:.875rem; transition:color .3s; }
+  .footer-links a:hover { color:#fff; }
+  .footer-bottom { padding:1.4rem 0; text-align:center; }
+  .footer-bottom p { color:rgba(255,255,255,.2); font-size:.78rem; }
+
+  /* ═══════════════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════════════ */
+  @media (max-width:1024px) {
+    .hero-inner { flex-direction:column; text-align:center; gap:3rem; }
+    .hero-left { max-width:100%; }
+    .hero-left > p, .hero-actions, .hero-trust { margin-left:auto; margin-right:auto; justify-content:center; }
+    .hero-globe { width:300px; height:300px; }
+    .gf1 { left:-5%; } .gf2 { right:-5%; }
+    .about-flex { grid-template-columns:1fr; gap:3rem; }
+    .contact-flex { grid-template-columns:1fr; }
+  }
+  @media (max-width:768px) {
+    .nav-links {
+      position:fixed; top:72px; left:0; right:0;
+      background:rgba(255,255,255,.98); flex-direction:column;
+      padding:1.5rem 2rem; gap:.5rem; border-bottom:1px solid var(--border);
+      transform:translateY(-110%); transition:transform .3s ease;
+      backdrop-filter:blur(20px);
+    }
+    .nav-links.active { transform:translateY(0); }
+    .nav-cta { display:none; }
+    .mobile-toggle { display:flex; }
+    section { padding:4rem 0; }
+    .form-row { grid-template-columns:1fr; }
+    .why-grid { grid-template-columns:1fr; }
+    .trade-banner { flex-direction:column; text-align:center; }
+    .tb-left { flex-direction:column; text-align:center; }
+    .footer-inner { flex-direction:column; text-align:center; }
+    .hero-globe { width:260px; height:260px; }
+    .gf1, .gf2 { display:none; }
+  }
+  @media (max-width:480px) {
+    nav { padding:0 1rem; }
+    .container { padding:0 1.2rem; }
+    .hero { padding:100px 1.2rem 40px; }
+    .hero-left h1 { font-size:2.1rem; }
+    .hero-actions { flex-direction:column; align-items:center; }
+    .btn { width:100%; justify-content:center; }
+    .contact-form { padding:1.5rem; }
+  }
+  </style>
 </head>
 <body>
 
-    <div id="flashMessages" class="flash-messages-container"></div>
+<div id="flashMessages" class="flash-messages-container"></div>
 
-    <!-- Header -->
-    <header id="mainHeader">
-        <nav>
-            <div class="logo">
-                <div class="logo-mark"><span class="lm-inner">T</span></div>
-                <div class="logo-text">
-                    <span class="lt-main">Transolux</span>
-                    <span class="lt-sub">ENTERPRISES</span>
-                </div>
-            </div>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#services">Products</a></li>
-                <li><a href="#why">Why Us</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <a href="#contact" class="nav-cta">Get a Quote</a>
-            <div class="mobile-toggle" onclick="toggleMenu()">
-                <span></span><span></span><span></span>
-            </div>
-        </nav>
-    </header>
+<!-- ═══════ HEADER ═══════ -->
+<header id="mainHeader">
+  <nav>
+    <a href="#home" class="logo">
+      <div class="logo-mark"><span>T</span></div>
+      <div class="logo-text">
+        <span class="lt-main">Transolux</span>
+        <span class="lt-sub">Enterprises</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#services">Products</a></li>
+      <li><a href="#why">Why Us</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Get a Quote</a>
+    <div class="mobile-toggle" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+</header>
 
-    <!-- HERO -->
-    <section id="home" class="hero">
-        <div class="hero-bg">
-            <div class="wave w1"></div>
-            <div class="wave w2"></div>
-            <div class="wave w3"></div>
+<!-- ═══════ HERO ═══════ -->
+<section id="home" class="hero">
+  <div class="hero-blob blob-1"></div>
+  <div class="hero-blob blob-2"></div>
+  <div class="hero-blob blob-3"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-dot"></span>
+        India-Based Import &amp; Export Company
+      </div>
+      <h1>
+        Your Gateway to<br>
+        <em class="grad-text">Global Trade</em>
+        Excellence
+      </h1>
+      <p>We connect businesses with high-quality products, reliable logistics, and seamless international trade solutions — sourced from trusted suppliers across India and beyond.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">
+          Start Trading
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#services" class="btn btn-outline">View Products</a>
+      </div>
+      <div class="hero-trust">
+        <div class="ht-item"><span>🏭</span> Verified Suppliers</div>
+        <div class="ht-item"><span>📋</span> Full Documentation</div>
+        <div class="ht-item"><span>🤝</span> Dedicated Support</div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-globe">
+        <div class="globe-card">
+          <div class="globe-ring gr1"><div class="ring-icon">🚢</div></div>
+          <div class="globe-ring gr2"><div class="ring-icon">✈️</div></div>
+          <div class="globe-ring gr3"><div class="ring-icon">📦</div></div>
+          <div class="globe-core">
+            <div class="globe-emoji">🌏</div>
+          </div>
         </div>
-        <div class="hero-shapes">
-            <div class="shape s1"></div>
-            <div class="shape s2"></div>
-            <div class="shape s3"></div>
-            <div class="shape s4"></div>
+        <div class="globe-float gf1"><span>✅</span> Quality Assured</div>
+        <div class="globe-float gf2"><span>🚀</span> Fast Shipping</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SERVICES ═══════ -->
+<section id="services" class="services">
+  <div class="container">
+    <div class="sec-header reveal">
+      <div class="tag">What We Trade</div>
+      <h2>Our <span class="grad-text">Product Range</span></h2>
+      <p>Premium quality products across multiple categories, sourced from reliable Indian suppliers for international markets</p>
+    </div>
+    <div class="products-grid">
+      <div class="product-card reveal" data-delay="0">
+        <div class="pc-stripe"></div>
+        <div class="pc-icon-wrap"><div class="pc-icon-bg"></div><div class="pc-icon">🧅</div></div>
+        <h3>Food Products</h3>
+        <ul class="product-list">
+          <li>Onions</li><li>Cashews</li><li>Spices</li><li>Rice</li>
+        </ul>
+        <div class="pc-badge">Export Ready</div>
+      </div>
+      <div class="product-card reveal" data-delay="120">
+        <div class="pc-stripe"></div>
+        <div class="pc-icon-wrap"><div class="pc-icon-bg"></div><div class="pc-icon">👗</div></div>
+        <h3>Clothing &amp; Fashion</h3>
+        <p>Premium fashion items sourced from verified manufacturers, ready for international markets worldwide with quality certification.</p>
+        <div class="pc-badge">Premium Quality</div>
+      </div>
+      <div class="product-card reveal" data-delay="240">
+        <div class="pc-stripe"></div>
+        <div class="pc-icon-wrap"><div class="pc-icon-bg"></div><div class="pc-icon">🎨</div></div>
+        <h3>Toys &amp; Handicrafts</h3>
+        <p>Unique toys and exquisite handicrafts showcasing India's traditional craftsmanship and exceptional quality standards for global buyers.</p>
+        <div class="pc-badge">Handcrafted</div>
+      </div>
+    </div>
+    <div class="trade-banner reveal">
+      <div class="tb-left">
+        <span class="tb-icon">💼</span>
+        <div>
+          <strong>End-to-End Trade Solutions</strong>
+          <p>We source from verified suppliers and handle delivery with full compliance, documentation, and customs support.</p>
         </div>
-        <div class="hero-left fade-up">
-            <div class="hero-eyebrow">
-                <span class="dot"></span>
-                India-Based Import &amp; Export Company
-            </div>
-            <h1>
-                Your Gateway to<br>
-                <span class="hero-grad">Global Trade</span><br>
-                Excellence
-            </h1>
-            <p>We connect businesses with high-quality products, reliable logistics, and seamless international trade solutions — sourced from trusted suppliers across India and beyond.</p>
-            <div class="hero-actions">
-                <a href="#contact" class="btn btn-primary">
-                    Start Trading
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </a>
-                <a href="#services" class="btn btn-outline">View Products</a>
-            </div>
-            <div class="hero-badges">
-                <div class="hb-item"><span class="hb-icon">🏭</span><span>Verified Suppliers</span></div>
-                <div class="hb-item"><span class="hb-icon">📋</span><span>Full Documentation</span></div>
-                <div class="hb-item"><span class="hb-icon">🤝</span><span>Dedicated Support</span></div>
-            </div>
+      </div>
+      <a href="#contact" class="btn btn-white">Talk to Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ WHY US ═══════ -->
+<section id="why" class="why">
+  <div class="container">
+    <div class="sec-header reveal">
+      <div class="tag">Why Choose Us</div>
+      <h2>The <span class="grad-text">Transolux Advantage</span></h2>
+      <p>We bring dedication, verified sourcing, and complete transparency to every trade</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal" data-delay="0">
+        <div class="wc-num">01</div>
+        <div class="wc-icon">✓</div>
+        <h3>Quality-Checked Products</h3>
+        <p>Every product undergoes rigorous quality inspection to ensure it meets international standards before shipping.</p>
+        <div class="wc-bar"></div>
+      </div>
+      <div class="why-card reveal" data-delay="80">
+        <div class="wc-num">02</div>
+        <div class="wc-icon">🏭</div>
+        <h3>Genuine Verified Suppliers</h3>
+        <p>We work only with verified and trusted suppliers who maintain consistent quality and reliability at scale.</p>
+        <div class="wc-bar"></div>
+      </div>
+      <div class="why-card reveal" data-delay="160">
+        <div class="wc-num">03</div>
+        <div class="wc-icon">💰</div>
+        <h3>Fair &amp; Transparent Pricing</h3>
+        <p>Competitive pricing with absolutely no hidden costs, ensuring maximum value and trust from the start.</p>
+        <div class="wc-bar"></div>
+      </div>
+      <div class="why-card reveal" data-delay="0">
+        <div class="wc-num">04</div>
+        <div class="wc-icon">📋</div>
+        <h3>Full Documentation Support</h3>
+        <p>We handle all export documentation, customs paperwork, and compliance so you can trade without worry.</p>
+        <div class="wc-bar"></div>
+      </div>
+      <div class="why-card reveal" data-delay="80">
+        <div class="wc-num">05</div>
+        <div class="wc-icon">🎯</div>
+        <h3>Dedicated Personal Service</h3>
+        <p>As a growing business, every client matters. You get direct, attentive, and personalized attention every time.</p>
+        <div class="wc-bar"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ ABOUT ═══════ -->
+<section id="about" class="about">
+  <div class="about-bg"></div>
+  <div class="container">
+    <div class="about-flex">
+      <div class="about-visual reveal">
+        <div class="av-card">
+          <div class="av-map">
+            <div class="map-globe">🗺️</div>
+            <div class="map-pin mp1">📍</div>
+            <div class="map-pin mp2">🏭</div>
+            <div class="map-pin mp3">✈️</div>
+          </div>
+          <div class="av-info">
+            <div class="av-stat"><strong>Nagpur, India</strong><span>Headquarters</span></div>
+            <div class="av-divider"></div>
+            <div class="av-stat"><strong>India &amp; Beyond</strong><span>Sourcing Network</span></div>
+          </div>
         </div>
-        <div class="hero-right fade-up" style="animation-delay:0.25s">
-            <div class="hero-visual">
-                <div class="globe-card">
-                    <div class="globe-wrap">
-                        <div class="globe-sphere">
-                            <div class="g-lat l1"></div>
-                            <div class="g-lat l2"></div>
-                            <div class="g-lat l3"></div>
-                            <div class="g-lon ln1"></div>
-                            <div class="g-lon ln2"></div>
-                            <div class="g-lon ln3"></div>
-                            <div class="g-core">🌍</div>
-                        </div>
-                        <div class="globe-orbit go1"><div class="go-dot">🚢</div></div>
-                        <div class="globe-orbit go2"><div class="go-dot">✈️</div></div>
-                        <div class="globe-orbit go3"><div class="go-dot">📦</div></div>
-                    </div>
-                </div>
-                <div class="val-float vf1"><div class="vf-icon">✓</div><span>Quality Assured</span></div>
-                <div class="val-float vf2"><div class="vf-icon">🚀</div><span>Fast Shipping</span></div>
-            </div>
+        <div class="av-badge ab1">🏆 Quality Focused</div>
+        <div class="av-badge ab2">🔒 Fully Compliant</div>
+      </div>
+      <div class="about-text reveal">
+        <div class="tag">Our Story</div>
+        <h2>About <span class="grad-text">Transolux</span></h2>
+        <p>Transolux Enterprises is a passionate new import-export company based in Nagpur, Maharashtra. We are building our journey in international trade with a strong foundation of integrity, quality, and commitment to our clients.</p>
+        <p>We specialize in facilitating seamless global commerce by connecting buyers worldwide with reliable Indian suppliers across food products, clothing, and handicrafts.</p>
+        <p>Our approach is simple — honest pricing, verified sourcing, complete documentation support, and a personal commitment to making every trade smooth and successful for our clients.</p>
+        <div class="about-pills">
+          <span>📍 Based in Nagpur</span>
+          <span>📋 Export Documentation</span>
+          <span>🤝 Verified Suppliers</span>
+          <span>🌱 Growing Together</span>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- SERVICES -->
-    <section id="services" class="services">
-        <div class="container">
-            <div class="sec-header reveal">
-                <div class="sec-tag">What We Trade</div>
-                <h2>Our <span class="grad-text">Product Range</span></h2>
-                <p>We specialize in international trade of premium quality products across multiple categories, sourced from reliable Indian suppliers</p>
-            </div>
-            <div class="products-grid">
-                <div class="product-card reveal" data-delay="0">
-                    <div class="pc-accent"></div>
-                    <div class="pc-icon-wrap"><div class="pc-icon-bg"></div><span class="pc-icon">🧅</span></div>
-                    <h3>Food Products</h3>
-                    <ul class="product-list">
-                        <li>Onions</li><li>Cashews</li><li>Spices</li><li>Rice</li>
-                    </ul>
-                    <div class="pc-badge">Export Ready</div>
-                </div>
-                <div class="product-card reveal" data-delay="120">
-                    <div class="pc-accent"></div>
-                    <div class="pc-icon-wrap"><div class="pc-icon-bg"></div><span class="pc-icon">👗</span></div>
-                    <h3>Clothing &amp; Fashion</h3>
-                    <p>Premium fashion items and clothing products sourced from verified manufacturers, ready for international markets worldwide.</p>
-                    <div class="pc-badge">Premium Quality</div>
-                </div>
-                <div class="product-card reveal" data-delay="240">
-                    <div class="pc-accent"></div>
-                    <div class="pc-icon-wrap"><div class="pc-icon-bg"></div><span class="pc-icon">🎨</span></div>
-                    <h3>Toys &amp; Handicrafts</h3>
-                    <p>Unique toys and exquisite handicrafts showcasing India's traditional craftsmanship and exceptional quality standards.</p>
-                    <div class="pc-badge">Handcrafted</div>
-                </div>
-            </div>
-            <div class="trade-banner reveal">
-                <div class="tb-left">
-                    <span class="tb-icon">💼</span>
-                    <div>
-                        <strong>End-to-End Trade Solutions</strong>
-                        <p>We source from verified suppliers and handle delivery with full compliance, documentation, and customs support.</p>
-                    </div>
-                </div>
-                <a href="#contact" class="btn btn-white">Talk to Us</a>
-            </div>
+<!-- ═══════ CONTACT ═══════ -->
+<section id="contact" class="contact">
+  <div class="container">
+    <div class="sec-header reveal">
+      <div class="tag">Get In Touch</div>
+      <h2>Let's <span class="grad-text">Start a Conversation</span></h2>
+      <p>Have a trade enquiry? We'd love to hear from you and explore how we can work together.</p>
+    </div>
+    <div class="contact-flex">
+
+      <!-- Left info -->
+      <div class="reveal">
+        <div class="cl-card">
+          <div class="contact-item">
+            <div class="ci-icon">📍</div>
+            <div class="ci-body"><h4>Our Office</h4><p>Nagpur, Maharashtra, India</p></div>
+          </div>
+          <div class="contact-item">
+            <div class="ci-icon">📞</div>
+            <div class="ci-body"><h4>Phone</h4><p>+91 84463 62075</p></div>
+          </div>
+          <div class="contact-item">
+            <div class="ci-icon">✉️</div>
+            <div class="ci-body"><h4>Email</h4><p>ujjwalnagrikar@gmail.com</p></div>
+          </div>
         </div>
-    </section>
-
-    <!-- WHY US -->
-    <section id="why" class="why">
-        <div class="container">
-            <div class="sec-header reveal">
-                <div class="sec-tag">Why Choose Us</div>
-                <h2>The <span class="grad-text">Transolux Advantage</span></h2>
-                <p>We may be new, but we bring dedication, verified sourcing, and complete transparency to every trade</p>
-            </div>
-            <div class="why-grid">
-                <div class="why-card reveal" data-delay="0">
-                    <div class="wc-num">01</div><div class="wc-icon">✓</div>
-                    <h3>Quality-Checked Products</h3>
-                    <p>Every product undergoes rigorous quality inspection to ensure it meets international standards before shipping.</p>
-                    <div class="wc-line"></div>
-                </div>
-                <div class="why-card reveal" data-delay="100">
-                    <div class="wc-num">02</div><div class="wc-icon">🏭</div>
-                    <h3>Genuine Verified Suppliers</h3>
-                    <p>We work only with verified and trusted suppliers who maintain consistent quality and reliability at scale.</p>
-                    <div class="wc-line"></div>
-                </div>
-                <div class="why-card reveal" data-delay="200">
-                    <div class="wc-num">03</div><div class="wc-icon">💰</div>
-                    <h3>Fair &amp; Transparent Pricing</h3>
-                    <p>Competitive pricing with absolutely no hidden costs, ensuring maximum value and trust from the start.</p>
-                    <div class="wc-line"></div>
-                </div>
-                <div class="why-card reveal" data-delay="0">
-                    <div class="wc-num">04</div><div class="wc-icon">📋</div>
-                    <h3>Full Documentation Support</h3>
-                    <p>We handle all export documentation, customs paperwork, and compliance so you can trade without worry.</p>
-                    <div class="wc-line"></div>
-                </div>
-                <div class="why-card reveal" data-delay="100">
-                    <div class="wc-num">05</div><div class="wc-icon">🎯</div>
-                    <h3>Dedicated Personal Service</h3>
-                    <p>As a growing business, every client matters deeply. You get direct, attentive, and personalized attention.</p>
-                    <div class="wc-line"></div>
-                </div>
-            </div>
+        <div class="cl-note">
+          <div class="cn-icon">💬</div>
+          <div>
+            <strong>We respond within 24 hours</strong>
+            <p>Every enquiry gets our full personal attention. No automated responses — just real conversations with real people.</p>
+          </div>
         </div>
-    </section>
+      </div>
 
-    <!-- ABOUT -->
-    <section id="about" class="about">
-        <div class="about-bg-shape"></div>
-        <div class="container">
-            <div class="about-flex">
-                <div class="about-visual reveal">
-                    <div class="av-card">
-                        <div class="av-map">
-                            <div class="map-emoji">🗺️</div>
-                            <div class="map-pin pin1">📍</div>
-                            <div class="map-pin pin2">🏭</div>
-                            <div class="map-pin pin3">✈️</div>
-                            <div class="map-pulse mp1"></div>
-                            <div class="map-pulse mp2"></div>
-                            <div class="map-pulse mp3"></div>
-                        </div>
-                        <div class="av-info">
-                            <div class="av-stat"><strong>Nagpur, India</strong><span>Headquarters</span></div>
-                            <div class="av-divider"></div>
-                            <div class="av-stat"><strong>India &amp; Beyond</strong><span>Sourcing Network</span></div>
-                        </div>
-                    </div>
-                    <div class="av-badge ab1">🏆 Quality Focused</div>
-                    <div class="av-badge ab2">🔒 Fully Compliant</div>
-                </div>
-                <div class="about-text reveal">
-                    <div class="sec-tag">Our Story</div>
-                    <h2 style="text-align:left">About <span class="grad-text">Transolux</span></h2>
-                    <p>Transolux Enterprises is a passionate new import-export company based in Nagpur, Maharashtra. We are building our journey in international trade with a strong foundation of integrity, quality, and commitment to our clients.</p>
-                    <p>We specialize in facilitating seamless global commerce by connecting buyers worldwide with reliable Indian suppliers across food products, clothing, and handicrafts.</p>
-                    <p>Our approach is simple — honest pricing, verified sourcing, complete documentation support, and a personal commitment to making every trade smooth and successful for our clients.</p>
-                    <div class="about-pills">
-                        <span>📍 Based in Nagpur, India</span>
-                        <span>📋 Export Documentation</span>
-                        <span>🤝 Verified Suppliers</span>
-                        <span>🌱 Growing Together</span>
-                    </div>
-                </div>
-            </div>
+      <!-- Contact form -->
+      <!-- action="/submit" is a fallback only — JS intercepts and posts to /submit via fetch -->
+      <form class="contact-form reveal" id="contactForm" action="/submit" method="POST" novalidate>
+        <div class="form-header">
+          <h3>Send Us a Message</h3>
+          <p>Tell us what you need and we'll get back to you promptly</p>
         </div>
-    </section>
 
-    <!-- CONTACT -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <div class="sec-header reveal">
-                <div class="sec-tag">Get In Touch</div>
-                <h2>Let's <span class="grad-text">Start a Conversation</span></h2>
-                <p>Have a trade enquiry? We'd love to hear from you and explore how we can work together.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <div class="input-box">
+              <span class="ib-icon">👤</span>
+              <input type="text" id="name" name="name" placeholder="Your Name" required autocomplete="name">
             </div>
-            <div class="contact-flex">
-                <div class="contact-left reveal">
-                    <div class="cl-card">
-                        <div class="contact-item">
-                            <div class="ci-icon">📍</div>
-                            <div class="ci-body"><h4>Our Office</h4><p>Nagpur, Maharashtra, India</p></div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="ci-icon">📞</div>
-                            <div class="ci-body"><h4>Phone</h4><p>+91 84463 62075</p></div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="ci-icon">✉️</div>
-                            <div class="ci-body"><h4>Email</h4><p>ujjwalnagrikar@gmail.com</p></div>
-                        </div>
-                    </div>
-                    <div class="cl-commitment">
-                        <div class="cc-icon">💬</div>
-                        <div>
-                            <strong>We respond within 24 hours</strong>
-                            <p>Every enquiry gets our full, personal attention. No automated responses — just real conversations.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CONTACT FORM -->
-                <form class="contact-form reveal" id="contactForm" action="/submit" method="POST">
-                    <div class="form-header">
-                        <h3>Send Us a Message</h3>
-                        <p>Tell us what you need and we'll get back to you promptly</p>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="name">Full Name</label>
-                            <div class="input-box">
-                                <span class="ib-icon">👤</span>
-                                <input type="text" id="name" name="name" placeholder="Your Name" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <div class="input-box">
-                                <span class="ib-icon">✉️</span>
-                                <input type="email" id="email" name="email" placeholder="you@example.com" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Hidden field — Flask receives combined "+code number" -->
-                    <input type="hidden" id="phone" name="phone">
-
-                    <div class="form-group">
-                        <label for="phoneNumber">
-                            Phone Number
-                            <span style="color:#ef4444;font-size:0.75rem;font-weight:600;margin-left:4px;">✱ Required</span>
-                        </label>
-                        <div class="phone-input-group" id="phoneInputGroup">
-                            <!-- Country code selector -->
-                            <div class="country-select-wrap">
-                                <span class="country-flag" id="countryFlag">🇮🇳</span>
-                                <select class="country-select" id="countryCode" required>
-                                    <!-- A -->
-                                    <option value="+93"  data-flag="🇦🇫">🇦🇫 AF +93</option>
-                                    <option value="+355" data-flag="🇦🇱">🇦🇱 AL +355</option>
-                                    <option value="+213" data-flag="🇩🇿">🇩🇿 DZ +213</option>
-                                    <option value="+376" data-flag="🇦🇩">🇦🇩 AD +376</option>
-                                    <option value="+244" data-flag="🇦🇴">🇦🇴 AO +244</option>
-                                    <option value="+1"   data-flag="🇦🇬">🇦🇬 AG +1</option>
-                                    <option value="+54"  data-flag="🇦🇷">🇦🇷 AR +54</option>
-                                    <option value="+374" data-flag="🇦🇲">🇦🇲 AM +374</option>
-                                    <option value="+297" data-flag="🇦🇼">🇦🇼 AW +297</option>
-                                    <option value="+61"  data-flag="🇦🇺">🇦🇺 AU +61</option>
-                                    <option value="+43"  data-flag="🇦🇹">🇦🇹 AT +43</option>
-                                    <option value="+994" data-flag="🇦🇿">🇦🇿 AZ +994</option>
-
-                                    <!-- B -->
-                                    <option value="+1"   data-flag="🇧🇸">🇧🇸 BS +1</option>
-                                    <option value="+973" data-flag="🇧🇭">🇧🇭 BH +973</option>
-                                    <option value="+880" data-flag="🇧🇩">🇧🇩 BD +880</option>
-                                    <option value="+1"   data-flag="🇧🇧">🇧🇧 BB +1</option>
-                                    <option value="+375" data-flag="🇧🇾">🇧🇾 BY +375</option>
-                                    <option value="+32"  data-flag="🇧🇪">🇧🇪 BE +32</option>
-                                    <option value="+501" data-flag="🇧🇿">🇧🇿 BZ +501</option>
-                                    <option value="+229" data-flag="🇧🇯">🇧🇯 BJ +229</option>
-                                    <option value="+975" data-flag="🇧🇹">🇧🇹 BT +975</option>
-                                    <option value="+591" data-flag="🇧🇴">🇧🇴 BO +591</option>
-                                    <option value="+387" data-flag="🇧🇦">🇧🇦 BA +387</option>
-                                    <option value="+267" data-flag="🇧🇼">🇧🇼 BW +267</option>
-                                    <option value="+55"  data-flag="🇧🇷">🇧🇷 BR +55</option>
-                                    <option value="+673" data-flag="🇧🇳">🇧🇳 BN +673</option>
-                                    <option value="+359" data-flag="🇧🇬">🇧🇬 BG +359</option>
-                                    <option value="+226" data-flag="🇧🇫">🇧🇫 BF +226</option>
-                                    <option value="+257" data-flag="🇧🇮">🇧🇮 BI +257</option>
-
-                                    <!-- C -->
-                                    <option value="+238" data-flag="🇨🇻">🇨🇻 CV +238</option>
-                                    <option value="+855" data-flag="🇰🇭">🇰🇭 KH +855</option>
-                                    <option value="+237" data-flag="🇨🇲">🇨🇲 CM +237</option>
-                                    <option value="+1"   data-flag="🇨🇦">🇨🇦 CA +1</option>
-                                    <option value="+236" data-flag="🇨🇫">🇨🇫 CF +236</option>
-                                    <option value="+235" data-flag="🇹🇩">🇹🇩 TD +235</option>
-                                    <option value="+56"  data-flag="🇨🇱">🇨🇱 CL +56</option>
-                                    <option value="+86"  data-flag="🇨🇳">🇨🇳 CN +86</option>
-                                    <option value="+57"  data-flag="🇨🇴">🇨🇴 CO +57</option>
-                                    <option value="+269" data-flag="🇰🇲">🇰🇲 KM +269</option>
-                                    <option value="+242" data-flag="🇨🇬">🇨🇬 CG +242</option>
-                                    <option value="+243" data-flag="🇨🇩">🇨🇩 CD +243</option>
-                                    <option value="+506" data-flag="🇨🇷">🇨🇷 CR +506</option>
-                                    <option value="+225" data-flag="🇨🇮">🇨🇮 CI +225</option>
-                                    <option value="+385" data-flag="🇭🇷">🇭🇷 HR +385</option>
-                                    <option value="+53"  data-flag="🇨🇺">🇨🇺 CU +53</option>
-                                    <option value="+357" data-flag="🇨🇾">🇨🇾 CY +357</option>
-                                    <option value="+420" data-flag="🇨🇿">🇨🇿 CZ +420</option>
-
-                                    <!-- D -->
-                                    <option value="+45"  data-flag="🇩🇰">🇩🇰 DK +45</option>
-                                    <option value="+253" data-flag="🇩🇯">🇩🇯 DJ +253</option>
-                                    <option value="+1"   data-flag="🇩🇲">🇩🇲 DM +1</option>
-                                    <option value="+1"   data-flag="🇩🇴">🇩🇴 DO +1</option>
-
-                                    <!-- E -->
-                                    <option value="+593" data-flag="🇪🇨">🇪🇨 EC +593</option>
-                                    <option value="+20"  data-flag="🇪🇬">🇪🇬 EG +20</option>
-                                    <option value="+503" data-flag="🇸🇻">🇸🇻 SV +503</option>
-                                    <option value="+240" data-flag="🇬🇶">🇬🇶 GQ +240</option>
-                                    <option value="+291" data-flag="🇪🇷">🇪🇷 ER +291</option>
-                                    <option value="+372" data-flag="🇪🇪">🇪🇪 EE +372</option>
-                                    <option value="+268" data-flag="🇸🇿">🇸🇿 SZ +268</option>
-                                    <option value="+251" data-flag="🇪🇹">🇪🇹 ET +251</option>
-
-                                    <!-- F -->
-                                    <option value="+679" data-flag="🇫🇯">🇫🇯 FJ +679</option>
-                                    <option value="+358" data-flag="🇫🇮">🇫🇮 FI +358</option>
-                                    <option value="+298" data-flag="🇫🇴">🇫🇴 FO +298</option>
-                                    <option value="+33"  data-flag="🇫🇷">🇫🇷 FR +33</option>
-
-                                    <!-- G -->
-                                    <option value="+241" data-flag="🇬🇦">🇬🇦 GA +241</option>
-                                    <option value="+220" data-flag="🇬🇲">🇬🇲 GM +220</option>
-                                    <option value="+995" data-flag="🇬🇪">🇬🇪 GE +995</option>
-                                    <option value="+49"  data-flag="🇩🇪">🇩🇪 DE +49</option>
-                                    <option value="+233" data-flag="🇬🇭">🇬🇭 GH +233</option>
-                                    <option value="+350" data-flag="🇬🇮">🇬🇮 GI +350</option>
-                                    <option value="+299" data-flag="🇬🇱">🇬🇱 GL +299</option>
-                                    <option value="+30"  data-flag="🇬🇷">🇬🇷 GR +30</option>
-                                    <option value="+1"   data-flag="🇬🇩">🇬🇩 GD +1</option>
-                                    <option value="+1"   data-flag="🇬🇺">🇬🇺 GU +1</option>
-                                    <option value="+502" data-flag="🇬🇹">🇬🇹 GT +502</option>
-                                    <option value="+224" data-flag="🇬🇳">🇬🇳 GN +224</option>
-                                    <option value="+245" data-flag="🇬🇼">🇬🇼 GW +245</option>
-                                    <option value="+592" data-flag="🇬🇾">🇬🇾 GY +592</option>
-
-                                    <!-- H -->
-                                    <option value="+509" data-flag="🇭🇹">🇭🇹 HT +509</option>
-                                    <option value="+504" data-flag="🇭🇳">🇭🇳 HN +504</option>
-                                    <option value="+852" data-flag="🇭🇰">🇭🇰 HK +852</option>
-                                    <option value="+36"  data-flag="🇭🇺">🇭🇺 HU +36</option>
-
-                                    <!-- I -->
-                                    <option value="+91" data-flag="🇮🇳" selected>🇮🇳 IN +91</option>
-                                    <option value="+354" data-flag="🇮🇸">🇮🇸 IS +354</option>
-                                    <option value="+62"  data-flag="🇮🇩">🇮🇩 ID +62</option>
-                                    <option value="+98"  data-flag="🇮🇷">🇮🇷 IR +98</option>
-                                    <option value="+964" data-flag="🇮🇶">🇮🇶 IQ +964</option>
-                                    <option value="+353" data-flag="🇮🇪">🇮🇪 IE +353</option>
-                                    <option value="+972" data-flag="🇮🇱">🇮🇱 IL +972</option>
-                                    <option value="+39"  data-flag="🇮🇹">🇮🇹 IT +39</option>
-
-                                    <!-- J -->
-                                    <option value="+1"   data-flag="🇯🇲">🇯🇲 JM +1</option>
-                                    <option value="+81"  data-flag="🇯🇵">🇯🇵 JP +81</option>
-                                    <option value="+962" data-flag="🇯🇴">🇯🇴 JO +962</option>
-
-                                    <!-- K -->
-                                    <option value="+7"   data-flag="🇰🇿">🇰🇿 KZ +7</option>
-                                    <option value="+254" data-flag="🇰🇪">🇰🇪 KE +254</option>
-                                    <option value="+686" data-flag="🇰🇮">🇰🇮 KI +686</option>
-                                    <option value="+850" data-flag="🇰🇵">🇰🇵 KP +850</option>
-                                    <option value="+82"  data-flag="🇰🇷">🇰🇷 KR +82</option>
-                                    <option value="+383" data-flag="🇽🇰">🇽🇰 XK +383</option>
-                                    <option value="+965" data-flag="🇰🇼">🇰🇼 KW +965</option>
-                                    <option value="+996" data-flag="🇰🇬">🇰🇬 KG +996</option>
-
-                                    <!-- L -->
-                                    <option value="+856" data-flag="🇱🇦">🇱🇦 LA +856</option>
-                                    <option value="+371" data-flag="🇱🇻">🇱🇻 LV +371</option>
-                                    <option value="+961" data-flag="🇱🇧">🇱🇧 LB +961</option>
-                                    <option value="+266" data-flag="🇱🇸">🇱🇸 LS +266</option>
-                                    <option value="+231" data-flag="🇱🇷">🇱🇷 LR +231</option>
-                                    <option value="+218" data-flag="🇱🇾">🇱🇾 LY +218</option>
-                                    <option value="+423" data-flag="🇱🇮">🇱🇮 LI +423</option>
-                                    <option value="+370" data-flag="🇱🇹">🇱🇹 LT +370</option>
-                                    <option value="+352" data-flag="🇱🇺">🇱🇺 LU +352</option>
-
-                                    <!-- M -->
-                                    <option value="+853" data-flag="🇲🇴">🇲🇴 MO +853</option>
-                                    <option value="+261" data-flag="🇲🇬">🇲🇬 MG +261</option>
-                                    <option value="+265" data-flag="🇲🇼">🇲🇼 MW +265</option>
-                                    <option value="+60"  data-flag="🇲🇾">🇲🇾 MY +60</option>
-                                    <option value="+960" data-flag="🇲🇻">🇲🇻 MV +960</option>
-                                    <option value="+223" data-flag="🇲🇱">🇲🇱 ML +223</option>
-                                    <option value="+356" data-flag="🇲🇹">🇲🇹 MT +356</option>
-                                    <option value="+692" data-flag="🇲🇭">🇲🇭 MH +692</option>
-                                    <option value="+222" data-flag="🇲🇷">🇲🇷 MR +222</option>
-                                    <option value="+230" data-flag="🇲🇺">🇲🇺 MU +230</option>
-                                    <option value="+52"  data-flag="🇲🇽">🇲🇽 MX +52</option>
-                                    <option value="+691" data-flag="🇫🇲">🇫🇲 FM +691</option>
-                                    <option value="+373" data-flag="🇲🇩">🇲🇩 MD +373</option>
-                                    <option value="+377" data-flag="🇲🇨">🇲🇨 MC +377</option>
-                                    <option value="+976" data-flag="🇲🇳">🇲🇳 MN +976</option>
-                                    <option value="+382" data-flag="🇲🇪">🇲🇪 ME +382</option>
-                                    <option value="+212" data-flag="🇲🇦">🇲🇦 MA +212</option>
-                                    <option value="+258" data-flag="🇲🇿">🇲🇿 MZ +258</option>
-                                    <option value="+95"  data-flag="🇲🇲">🇲🇲 MM +95</option>
-                                    <option value="+389" data-flag="🇲🇰">🇲🇰 MK +389</option>
-
-                                    <!-- N -->
-                                    <option value="+264" data-flag="🇳🇦">🇳🇦 NA +264</option>
-                                    <option value="+674" data-flag="🇳🇷">🇳🇷 NR +674</option>
-                                    <option value="+977" data-flag="🇳🇵">🇳🇵 NP +977</option>
-                                    <option value="+31"  data-flag="🇳🇱">🇳🇱 NL +31</option>
-                                    <option value="+687" data-flag="🇳🇨">🇳🇨 NC +687</option>
-                                    <option value="+64"  data-flag="🇳🇿">🇳🇿 NZ +64</option>
-                                    <option value="+505" data-flag="🇳🇮">🇳🇮 NI +505</option>
-                                    <option value="+227" data-flag="🇳🇪">🇳🇪 NE +227</option>
-                                    <option value="+234" data-flag="🇳🇬">🇳🇬 NG +234</option>
-                                    <option value="+47"  data-flag="🇳🇴">🇳🇴 NO +47</option>
-
-                                    <!-- O -->
-                                    <option value="+968" data-flag="🇴🇲">🇴🇲 OM +968</option>
-
-                                    <!-- P -->
-                                    <option value="+92"  data-flag="🇵🇰">🇵🇰 PK +92</option>
-                                    <option value="+680" data-flag="🇵🇼">🇵🇼 PW +680</option>
-                                    <option value="+970" data-flag="🇵🇸">🇵🇸 PS +970</option>
-                                    <option value="+507" data-flag="🇵🇦">🇵🇦 PA +507</option>
-                                    <option value="+675" data-flag="🇵🇬">🇵🇬 PG +675</option>
-                                    <option value="+595" data-flag="🇵🇾">🇵🇾 PY +595</option>
-                                    <option value="+51"  data-flag="🇵🇪">🇵🇪 PE +51</option>
-                                    <option value="+63"  data-flag="🇵🇭">🇵🇭 PH +63</option>
-                                    <option value="+48"  data-flag="🇵🇱">🇵🇱 PL +48</option>
-                                    <option value="+351" data-flag="🇵🇹">🇵🇹 PT +351</option>
-                                    <option value="+1"   data-flag="🇵🇷">🇵🇷 PR +1</option>
-
-                                    <!-- Q -->
-                                    <option value="+974" data-flag="🇶🇦">🇶🇦 QA +974</option>
-
-                                    <!-- R -->
-                                    <option value="+262" data-flag="🇷🇪">🇷🇪 RE +262</option>
-                                    <option value="+40"  data-flag="🇷🇴">🇷🇴 RO +40</option>
-                                    <option value="+7"   data-flag="🇷🇺">🇷🇺 RU +7</option>
-                                    <option value="+250" data-flag="🇷🇼">🇷🇼 RW +250</option>
-
-                                    <!-- S -->
-                                    <option value="+1"   data-flag="🇰🇳">🇰🇳 KN +1</option>
-                                    <option value="+1"   data-flag="🇱🇨">🇱🇨 LC +1</option>
-                                    <option value="+1"   data-flag="🇻🇨">🇻🇨 VC +1</option>
-                                    <option value="+685" data-flag="🇼🇸">🇼🇸 WS +685</option>
-                                    <option value="+378" data-flag="🇸🇲">🇸🇲 SM +378</option>
-                                    <option value="+239" data-flag="🇸🇹">🇸🇹 ST +239</option>
-                                    <option value="+966" data-flag="🇸🇦">🇸🇦 SA +966</option>
-                                    <option value="+221" data-flag="🇸🇳">🇸🇳 SN +221</option>
-                                    <option value="+381" data-flag="🇷🇸">🇷🇸 RS +381</option>
-                                    <option value="+248" data-flag="🇸🇨">🇸🇨 SC +248</option>
-                                    <option value="+232" data-flag="🇸🇱">🇸🇱 SL +232</option>
-                                    <option value="+65"  data-flag="🇸🇬">🇸🇬 SG +65</option>
-                                    <option value="+421" data-flag="🇸🇰">🇸🇰 SK +421</option>
-                                    <option value="+386" data-flag="🇸🇮">🇸🇮 SI +386</option>
-                                    <option value="+677" data-flag="🇸🇧">🇸🇧 SB +677</option>
-                                    <option value="+252" data-flag="🇸🇴">🇸🇴 SO +252</option>
-                                    <option value="+27"  data-flag="🇿🇦">🇿🇦 ZA +27</option>
-                                    <option value="+211" data-flag="🇸🇸">🇸🇸 SS +211</option>
-                                    <option value="+34"  data-flag="🇪🇸">🇪🇸 ES +34</option>
-                                    <option value="+94"  data-flag="🇱🇰">🇱🇰 LK +94</option>
-                                    <option value="+249" data-flag="🇸🇩">🇸🇩 SD +249</option>
-                                    <option value="+597" data-flag="🇸🇷">🇸🇷 SR +597</option>
-                                    <option value="+46"  data-flag="🇸🇪">🇸🇪 SE +46</option>
-                                    <option value="+41"  data-flag="🇨🇭">🇨🇭 CH +41</option>
-                                    <option value="+963" data-flag="🇸🇾">🇸🇾 SY +963</option>
-
-                                    <!-- T -->
-                                    <option value="+886" data-flag="🇹🇼">🇹🇼 TW +886</option>
-                                    <option value="+992" data-flag="🇹🇯">🇹🇯 TJ +992</option>
-                                    <option value="+255" data-flag="🇹🇿">🇹🇿 TZ +255</option>
-                                    <option value="+66"  data-flag="🇹🇭">🇹🇭 TH +66</option>
-                                    <option value="+670" data-flag="🇹🇱">🇹🇱 TL +670</option>
-                                    <option value="+228" data-flag="🇹🇬">🇹🇬 TG +228</option>
-                                    <option value="+676" data-flag="🇹🇴">🇹🇴 TO +676</option>
-                                    <option value="+1"   data-flag="🇹🇹">🇹🇹 TT +1</option>
-                                    <option value="+216" data-flag="🇹🇳">🇹🇳 TN +216</option>
-                                    <option value="+90"  data-flag="🇹🇷">🇹🇷 TR +90</option>
-                                    <option value="+993" data-flag="🇹🇲">🇹🇲 TM +993</option>
-                                    <option value="+688" data-flag="🇹🇻">🇹🇻 TV +688</option>
-
-                                    <!-- U -->
-                                    <option value="+256" data-flag="🇺🇬">🇺🇬 UG +256</option>
-                                    <option value="+380" data-flag="🇺🇦">🇺🇦 UA +380</option>
-                                    <option value="+971" data-flag="🇦🇪">🇦🇪 AE +971</option>
-                                    <option value="+44"  data-flag="🇬🇧">🇬🇧 GB +44</option>
-                                    <option value="+1"   data-flag="🇺🇸">🇺🇸 US +1</option>
-                                    <option value="+598" data-flag="🇺🇾">🇺🇾 UY +598</option>
-                                    <option value="+998" data-flag="🇺🇿">🇺🇿 UZ +998</option>
-
-                                    <!-- V -->
-                                    <option value="+678" data-flag="🇻🇺">🇻🇺 VU +678</option>
-                                    <option value="+379" data-flag="🇻🇦">🇻🇦 VA +379</option>
-                                    <option value="+58"  data-flag="🇻🇪">🇻🇪 VE +58</option>
-                                    <option value="+84"  data-flag="🇻🇳">🇻🇳 VN +84</option>
-
-                                    <!-- Y -->
-                                    <option value="+967" data-flag="🇾🇪">🇾🇪 YE +967</option>
-
-                                    <!-- Z -->
-                                    <option value="+260" data-flag="🇿🇲">🇿🇲 ZM +260</option>
-                                    <option value="+263" data-flag="🇿🇼">🇿🇼 ZW +263</option>
-
-                                    </optgroup>
-                                </select>
-                                <span class="country-chevron">▼</span>
-                            </div>
-                            <!-- Number input -->
-                            <input
-                                type="tel"
-                                id="phoneNumber"
-                                class="phone-number-input"
-                                placeholder="Enter phone number"
-                                pattern="[0-9\s\-]{6,15}"
-                                required
-                                title="Please enter a valid phone number (digits only)"
-                            >
-                        </div>
-                        <div class="phone-required-note">
-                            <span>📍</span> Country code required — helps us reach you correctly
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="message">Your Message</label>
-                        <div class="input-box ib-ta">
-                            <span class="ib-icon ib-ta-icon">💬</span>
-                            <textarea id="message" name="message" placeholder="Tell us about your trade requirements..." required></textarea>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-full">
-                        Send Message
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-                    </button>
-                </form>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <div class="input-box">
+              <span class="ib-icon">✉️</span>
+              <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
             </div>
+          </div>
         </div>
-    </section>
 
-    <!-- FOOTER -->
-    <footer>
-        <div class="container">
-            <div class="footer-inner">
-                <div class="footer-brand">
-                    <div class="logo">
-                        <div class="logo-mark"><span class="lm-inner">T</span></div>
-                        <div class="logo-text">
-                            <span class="lt-main">Transolux</span>
-                            <span class="lt-sub">ENTERPRISES</span>
-                        </div>
-                    </div>
-                    <p>Your trusted partner for seamless international trade solutions from India.</p>
-                </div>
-                <div class="footer-links">
-                    <a href="#home">Home</a>
-                    <a href="#services">Products</a>
-                    <a href="#why">Why Us</a>
-                    <a href="#about">About</a>
-                    <a href="#contact">Contact</a>
-                </div>
+        <!-- Hidden field — receives combined "+91 9876543210" -->
+        <input type="hidden" id="phone" name="phone">
+
+        <div class="form-group">
+          <label for="phoneNumber">
+            Phone Number <span class="req">✱ Required</span>
+          </label>
+          <div class="phone-wrap" id="phoneInputGroup">
+            <div class="cc-wrap">
+              <span class="cc-flag" id="countryFlag">🇮🇳</span>
+              <select class="cc-select" id="countryCode">
+                <option value="+93"  data-flag="🇦🇫">🇦🇫 AF +93</option>
+                <option value="+355" data-flag="🇦🇱">🇦🇱 AL +355</option>
+                <option value="+213" data-flag="🇩🇿">🇩🇿 DZ +213</option>
+                <option value="+54"  data-flag="🇦🇷">🇦🇷 AR +54</option>
+                <option value="+61"  data-flag="🇦🇺">🇦🇺 AU +61</option>
+                <option value="+43"  data-flag="🇦🇹">🇦🇹 AT +43</option>
+                <option value="+880" data-flag="🇧🇩">🇧🇩 BD +880</option>
+                <option value="+32"  data-flag="🇧🇪">🇧🇪 BE +32</option>
+                <option value="+55"  data-flag="🇧🇷">🇧🇷 BR +55</option>
+                <option value="+1"   data-flag="🇨🇦">🇨🇦 CA +1</option>
+                <option value="+86"  data-flag="🇨🇳">🇨🇳 CN +86</option>
+                <option value="+57"  data-flag="🇨🇴">🇨🇴 CO +57</option>
+                <option value="+20"  data-flag="🇪🇬">🇪🇬 EG +20</option>
+                <option value="+251" data-flag="🇪🇹">🇪🇹 ET +251</option>
+                <option value="+33"  data-flag="🇫🇷">🇫🇷 FR +33</option>
+                <option value="+49"  data-flag="🇩🇪">🇩🇪 DE +49</option>
+                <option value="+233" data-flag="🇬🇭">🇬🇭 GH +233</option>
+                <option value="+30"  data-flag="🇬🇷">🇬🇷 GR +30</option>
+                <option value="+852" data-flag="🇭🇰">🇭🇰 HK +852</option>
+                <option value="+91"  data-flag="🇮🇳" selected>🇮🇳 IN +91</option>
+                <option value="+62"  data-flag="🇮🇩">🇮🇩 ID +62</option>
+                <option value="+98"  data-flag="🇮🇷">🇮🇷 IR +98</option>
+                <option value="+964" data-flag="🇮🇶">🇮🇶 IQ +964</option>
+                <option value="+353" data-flag="🇮🇪">🇮🇪 IE +353</option>
+                <option value="+972" data-flag="🇮🇱">🇮🇱 IL +972</option>
+                <option value="+39"  data-flag="🇮🇹">🇮🇹 IT +39</option>
+                <option value="+81"  data-flag="🇯🇵">🇯🇵 JP +81</option>
+                <option value="+962" data-flag="🇯🇴">🇯🇴 JO +962</option>
+                <option value="+254" data-flag="🇰🇪">🇰🇪 KE +254</option>
+                <option value="+82"  data-flag="🇰🇷">🇰🇷 KR +82</option>
+                <option value="+965" data-flag="🇰🇼">🇰🇼 KW +965</option>
+                <option value="+60"  data-flag="🇲🇾">🇲🇾 MY +60</option>
+                <option value="+52"  data-flag="🇲🇽">🇲🇽 MX +52</option>
+                <option value="+212" data-flag="🇲🇦">🇲🇦 MA +212</option>
+                <option value="+977" data-flag="🇳🇵">🇳🇵 NP +977</option>
+                <option value="+31"  data-flag="🇳🇱">🇳🇱 NL +31</option>
+                <option value="+64"  data-flag="🇳🇿">🇳🇿 NZ +64</option>
+                <option value="+234" data-flag="🇳🇬">🇳🇬 NG +234</option>
+                <option value="+47"  data-flag="🇳🇴">🇳🇴 NO +47</option>
+                <option value="+968" data-flag="🇴🇲">🇴🇲 OM +968</option>
+                <option value="+92"  data-flag="🇵🇰">🇵🇰 PK +92</option>
+                <option value="+63"  data-flag="🇵🇭">🇵🇭 PH +63</option>
+                <option value="+48"  data-flag="🇵🇱">🇵🇱 PL +48</option>
+                <option value="+351" data-flag="🇵🇹">🇵🇹 PT +351</option>
+                <option value="+974" data-flag="🇶🇦">🇶🇦 QA +974</option>
+                <option value="+7"   data-flag="🇷🇺">🇷🇺 RU +7</option>
+                <option value="+966" data-flag="🇸🇦">🇸🇦 SA +966</option>
+                <option value="+65"  data-flag="🇸🇬">🇸🇬 SG +65</option>
+                <option value="+27"  data-flag="🇿🇦">🇿🇦 ZA +27</option>
+                <option value="+34"  data-flag="🇪🇸">🇪🇸 ES +34</option>
+                <option value="+94"  data-flag="🇱🇰">🇱🇰 LK +94</option>
+                <option value="+46"  data-flag="🇸🇪">🇸🇪 SE +46</option>
+                <option value="+41"  data-flag="🇨🇭">🇨🇭 CH +41</option>
+                <option value="+886" data-flag="🇹🇼">🇹🇼 TW +886</option>
+                <option value="+255" data-flag="🇹🇿">🇹🇿 TZ +255</option>
+                <option value="+66"  data-flag="🇹🇭">🇹🇭 TH +66</option>
+                <option value="+90"  data-flag="🇹🇷">🇹🇷 TR +90</option>
+                <option value="+256" data-flag="🇺🇬">🇺🇬 UG +256</option>
+                <option value="+380" data-flag="🇺🇦">🇺🇦 UA +380</option>
+                <option value="+971" data-flag="🇦🇪">🇦🇪 AE +971</option>
+                <option value="+44"  data-flag="🇬🇧">🇬🇧 GB +44</option>
+                <option value="+1"   data-flag="🇺🇸">🇺🇸 US +1</option>
+                <option value="+998" data-flag="🇺🇿">🇺🇿 UZ +998</option>
+                <option value="+58"  data-flag="🇻🇪">🇻🇪 VE +58</option>
+                <option value="+84"  data-flag="🇻🇳">🇻🇳 VN +84</option>
+                <option value="+967" data-flag="🇾🇪">🇾🇪 YE +967</option>
+                <option value="+260" data-flag="🇿🇲">🇿🇲 ZM +260</option>
+                <option value="+263" data-flag="🇿🇼">🇿🇼 ZW +263</option>
+              </select>
+              <span class="cc-chevron">▼</span>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Transolux Enterprises. All rights reserved. | Nagpur, Maharashtra, India</p>
-            </div>
+            <input
+              type="tel"
+              id="phoneNumber"
+              class="phone-number"
+              placeholder="Enter phone number"
+              pattern="[0-9\s\-]{6,15}"
+              required>
+          </div>
+          <div class="phone-note"><span>📍</span> Country code required for accurate contact</div>
         </div>
-    </footer>
 
-    <script src="script.js?v=5"></script>
-    <script>
-    // ── Country flag updater ──────────────────────────────────
-    const countryCodeSelect = document.getElementById('countryCode');
-    const countryFlagEl     = document.getElementById('countryFlag');
+        <div class="form-group">
+          <label for="message">Your Message</label>
+          <div class="input-box ib-ta">
+            <span class="ib-icon">💬</span>
+            <textarea id="message" name="message" placeholder="Tell us about your trade requirements, products you're interested in, quantities, destination country…" required></textarea>
+          </div>
+        </div>
 
-    function updateFlag() {
-        const selected = countryCodeSelect.options[countryCodeSelect.selectedIndex];
-        countryFlagEl.textContent = selected.getAttribute('data-flag') || '🌐';
-    }
-    countryCodeSelect.addEventListener('change', updateFlag);
-    updateFlag(); // set on page load
+        <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+          Send Message
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+      </form>
 
-    // ── Combine code + number into hidden field before submit ──
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
-        const code   = countryCodeSelect.value;
-        const number = document.getElementById('phoneNumber').value.trim();
+    </div>
+  </div>
+</section>
 
-        if (!number) {
-            e.preventDefault();
-            const group = document.getElementById('phoneInputGroup');
-            group.style.borderColor = '#ef4444';
-            group.style.boxShadow   = '0 0 0 3px rgba(239,68,68,0.1)';
-            document.getElementById('phoneNumber').focus();
-            return;
-        }
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="#home" class="logo">
+          <div class="logo-mark"><span>T</span></div>
+          <div class="logo-text">
+            <span class="lt-main">Transolux</span>
+            <span class="lt-sub">Enterprises</span>
+          </div>
+        </a>
+        <p>Your trusted partner for seamless international trade solutions from India.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#home">Home</a>
+        <a href="#services">Products</a>
+        <a href="#why">Why Us</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 Transolux Enterprises. All rights reserved. | Nagpur, Maharashtra, India</p>
+    </div>
+  </div>
+</footer>
 
-        // Flask receives e.g. "+852 91234567" in the 'phone' field
-        document.getElementById('phone').value = code + ' ' + number;
-    });
+<!-- ═══════════════════════════════════════════════
+     SCRIPTS
+     script.js handles ALL form logic including:
+       - e.preventDefault()
+       - combining country code + phone number
+       - POSTing to /submit via fetch
+       - showing success/error flash messages
+     
+     This inline script does ONE thing only:
+       updating the country flag emoji in the dropdown.
+     There is NO submit listener here — that lives in script.js.
+═══════════════════════════════════════════════════ -->
+<script src="script.js?v=7"></script>
+<script>
+(function () {
+  var sel  = document.getElementById('countryCode');
+  var flag = document.getElementById('countryFlag');
+  if (!sel || !flag) return;
+  function sync() {
+    var opt = sel.options[sel.selectedIndex];
+    flag.textContent = (opt && opt.getAttribute('data-flag')) || '🌐';
+  }
+  sel.addEventListener('change', sync);
+  sync();
+})();
+</script>
 
-    // Reset red highlight when user types
-    document.getElementById('phoneNumber').addEventListener('input', function() {
-        const group = document.getElementById('phoneInputGroup');
-        group.style.borderColor = '';
-        group.style.boxShadow   = '';
-    });
-    </script>
 </body>
 </html>
