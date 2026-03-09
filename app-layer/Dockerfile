@@ -1,18 +1,17 @@
+# ── Base image ──────────────────────────────────────────────
 FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY . /app
+COPY requirements.txt .
 
-#RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --default-timeout=200 --no-cache-dir -r requirements.txt
-
+COPY . .
 
 EXPOSE 5000
 
 ENV FLASK_APP=app.py
+ENV FLASK_ENV=production
 
-ENV FLASK_ENV=development
-
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "app:app"]

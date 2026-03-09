@@ -1,61 +1,64 @@
-from flask import Flask, render_template, request, redirect, flash, url_for, send_from_directory, session, jsonify
-from urllib.parse import quote
+from flask import (
+    Flask, render_template, request, redirect,
+    url_for, send_from_directory, session, jsonify
+)
 from functools import wraps
 import mysql.connector
 from mysql.connector import Error, pooling
 import os
 import time
-from datetime import datetime, timedelta
+from datetime import timedelta
 
+# ══════════════════════════════════════════════════════
+#  APP SETUP
+# ══════════════════════════════════════════════════════
 app = Flask(__name__, static_folder='static', template_folder='Template')
-app.secret_key = 'transolux-enterprises-secret-key-2024'
+
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'transolux-enterprises-secret-key-2024')
 app.permanent_session_lifetime = timedelta(hours=3)
 
-# Admin credentials``
-ADMIN_USERNAME = "ujwal"
-ADMIN_PASSWORD = "ujwal9494"
+ADMIN_USERNAME = os.getenv('ADMIN_USERNAME', 'ujwal')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'ujwal9494')
 
-# Database Configuration for Docker
-
-db_host     = os.getenv("DB_HOST",     "mysql")
-db_user     = os.getenv("DB_USER",     "root")
-db_password = os.getenv("DB_PASSWORD", "rootpassword")
-db_name     = os.getenv("DB_NAME",     "mywebsite")
+DB_HOST     = os.getenv('DB_HOST',     'mysql')
+DB_USER     = os.getenv('DB_USER',     'root')
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'rootpassword')
+DB_NAME     = os.getenv('DB_NAME',     'mywebsite')
 
 print("=" * 50)
-print(" DATABASE CONFIGURATION")
-print("=" * 50)
-print(f"Host: {db_host}")
-print(f"User: {db_user}")
-print(f"Database: {db_name}")
+print(" TRANSOLUX — STARTING")
+print(f" DB: {DB_USER}@{DB_HOST}/{DB_NAME}")
 print("=" * 50)
 
-
+# ══════════════════════════════════════════════════════
+#  DATABASE POOL
+# ══════════════════════════════════════════════════════
 connection_pool = None
 
 
 def init_pool(max_retries=10, retry_delay=5):
     global connection_pool
-
     for attempt in range(max_retries):
         try:
-            print(f"DB Attempt {attempt + 1}/{max_retries}")
+            print(f"[DB] Attempt {attempt + 1}/{max_retries} ...")
 
-            #  Bootstrap: create the database if it doesn't exist
+            # 1. Ensure the database exists
             bootstrap = mysql.connector.connect(
-                host=db_host, user=db_user, password=db_password,
+                host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
                 connect_timeout=30, autocommit=True
             )
             cur = bootstrap.cursor()
-            cur.execute(f"CREATE DATABASE IF NOT EXISTS `{db_name}`")
+            cur.execute(
+                f"CREATE DATABASE IF NOT EXISTS `{DB_NAME}` "
+                "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+            )
             cur.close()
             bootstrap.close()
-            print(f" Database '{db_name}' created/verified")
 
-            #  Create the table
+            # 2. Create tables
             setup = mysql.connector.connect(
-                host=db_host, user=db_user, password=db_password,
-                database=db_name, connect_timeout=30, autocommit=True
+                host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+                database=DB_NAME, connect_timeout=30, autocommit=True
             )
             cur = setup.cursor()
             cur.execute("""
@@ -63,7 +66,7 @@ def init_pool(max_retries=10, retry_delay=5):
                     id         INT AUTO_INCREMENT PRIMARY KEY,
                     name       VARCHAR(255) NOT NULL,
                     email      VARCHAR(255) NOT NULL,
-                    phone      VARCHAR(50),
+                    phone      VARCHAR(100),
                     message    TEXT NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     INDEX idx_created_at (created_at)
@@ -71,30 +74,27 @@ def init_pool(max_retries=10, retry_delay=5):
             """)
             cur.close()
             setup.close()
-            print(" Table 'contact_queries' created/verified")
+            print("[DB] Tables ready")
 
-            #  Build the pool
+            # 3. Build pool
             connection_pool = pooling.MySQLConnectionPool(
                 pool_name="transolux_pool",
                 pool_size=5,
-                host=db_host,
-                user=db_user,
-                password=db_password,
-                database=db_name,
-                connect_timeout=30,
-                autocommit=True
+                host=DB_HOST, user=DB_USER,
+                password=DB_PASSWORD, database=DB_NAME,
+                connect_timeout=30, autocommit=True
             )
-            print(" Connection pool created (size=5)")
+            print("[DB] Pool ready (size=5)")
             print("=" * 50)
             return True
 
         except Error as e:
-            print(f" DB error: {e}")
+            print(f"[DB] Error: {e}")
             if attempt < max_retries - 1:
-                print(f" Retry in {retry_delay}s …")
+                print(f"[DB] Retrying in {retry_delay}s ...")
                 time.sleep(retry_delay)
 
-    print(" All DB attempts exhausted!")
+    print("[DB] All attempts exhausted")
     return False
 
 
@@ -104,34 +104,38 @@ def get_db():
     return connection_pool.get_connection()
 
 
-print("\n Starting Flask Application…")
 if not init_pool():
-    print("\n WARNING: DB init failed — DB features won't work.")
+    print("\nWARNING: DB unavailable — form submissions will not save.\n")
 else:
-    print("\n Application started successfully!")
+    print("\nApplication ready!\n")
 
 
-#  AUTH DECORATOR 
+# ══════════════════════════════════════════════════════
+#  AUTH DECORATOR
+# ══════════════════════════════════════════════════════
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if 'admin_logged_in' not in session:
             if request.path.startswith('/admin/api/'):
-                return jsonify({"error": "Session expired. Please log in again.", "redirect": "/admin/login"}), 401
+                return jsonify({
+                    "error": "Session expired. Please log in again.",
+                    "redirect": "/admin/login"
+                }), 401
             return redirect(url_for('admin_login'))
         return f(*args, **kwargs)
     return decorated
 
 
-#  PUBLIC ROUTES 
-
+# ══════════════════════════════════════════════════════
+#  PUBLIC ROUTES
+# ══════════════════════════════════════════════════════
 @app.route('/')
 def index():
     try:
         return send_from_directory(app.static_folder, 'index.html')
     except Exception as e:
-        print(f" Error serving index.html: {e}")
-        return f"Error: {e}", 500
+        return str(e), 500
 
 
 @app.route('/health')
@@ -143,51 +147,69 @@ def health():
         count = cur.fetchone()[0]
         cur.close()
         conn.close()
-        return {"status": "healthy", "database": "connected", "submissions": count}, 200
+        return jsonify({"status": "healthy", "database": "connected", "submissions": count}), 200
     except Exception as e:
-        return {"status": "unhealthy", "error": str(e)}, 503
+        return jsonify({"status": "unhealthy", "error": str(e)}), 503
 
 
 @app.route('/submit', methods=['POST'])
 def submit():
+    name    = request.form.get('name',    '').strip()
+    email   = request.form.get('email',   '').strip()
+    phone   = request.form.get('phone',   '').strip()
+    message = request.form.get('message', '').strip()
+
+    is_fetch = request.headers.get('X-Requested-With') == 'fetch'
+
+    # Validate
+    if not name or not email or not message:
+        err = 'Please fill in all required fields.'
+        return (jsonify({"success": False, "message": err}), 400) if is_fetch \
+               else redirect(f'/?error={err}')
+    if '@' not in email or '.' not in email:
+        err = 'Please enter a valid email address.'
+        return (jsonify({"success": False, "message": err}), 400) if is_fetch \
+               else redirect(f'/?error={err}')
+
+    # Save to database
     try:
-        name    = request.form.get('name',    '').strip()
-        email   = request.form.get('email',   '').strip()
-        phone   = request.form.get('phone',   '').strip()
-        message = request.form.get('message', '').strip()
-
-        print(f"New submission: {name} ({email})")
-
-        if not name or not email or not message:
-            return redirect('/?error=' + quote('Please fill in all required fields.'))
-        if '@' not in email or '.' not in email:
-            return redirect('/?error=' + quote('Please enter a valid email address.'))
-
         conn = get_db()
         cur  = conn.cursor()
         cur.execute(
-            "INSERT INTO contact_queries (name, email, phone, message) VALUES (%s, %s, %s, %s)",
+            "INSERT INTO contact_queries (name, email, phone, message) VALUES (%s,%s,%s,%s)",
             (name, email, phone, message)
         )
-        print(f" Saved! ID: {cur.lastrowid}")
+        new_id = cur.lastrowid
         cur.close()
         conn.close()
+        print(f"[SUBMIT] Saved enquiry #{new_id} from {name} ({email})")
 
-        return redirect('/?success=' + quote('✓ Thank you! We will contact you soon.'))
+        ok_msg = 'Thank you! Your enquiry has been received. We will contact you within 24 hours.'
+        return jsonify({"success": True, "message": ok_msg}) if is_fetch \
+               else redirect(f'/?success={ok_msg}')
 
     except RuntimeError as e:
-        print(f" Pool error: {e}")
-        return redirect('/?error=' + quote('Service temporarily unavailable. Please try again later.'))
+        print(f"[SUBMIT] Pool error: {e}")
+        err = 'Service temporarily unavailable. Please try again later.'
+        return (jsonify({"success": False, "message": err}), 503) if is_fetch \
+               else redirect(f'/?error={err}')
+
     except Error as e:
-        print(f" DB error: {e}")
-        return redirect('/?error=' + quote('Error submitting form. Please try again.'))
+        print(f"[SUBMIT] DB error: {e}")
+        err = 'Error saving your enquiry. Please try again.'
+        return (jsonify({"success": False, "message": err}), 500) if is_fetch \
+               else redirect(f'/?error={err}')
+
     except Exception as e:
-        print(f" Unexpected error: {e}")
-        return redirect('/?error=' + quote('An unexpected error occurred. Please try again.'))
+        print(f"[SUBMIT] Unexpected error: {e}")
+        err = 'An unexpected error occurred. Please try again.'
+        return (jsonify({"success": False, "message": err}), 500) if is_fetch \
+               else redirect(f'/?error={err}')
 
 
+# ══════════════════════════════════════════════════════
 #  ADMIN ROUTES
-
+# ══════════════════════════════════════════════════════
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if 'admin_logged_in' in session:
@@ -196,14 +218,14 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
-
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             session.permanent = True
             session['admin_logged_in'] = True
             session['admin_username']  = username
+            print(f"[ADMIN] Login: {username}")
             return redirect(url_for('admin'))
-        else:
-            return render_template('admin_login.html', error=True)
+        print(f"[ADMIN] Failed login for '{username}'")
+        return render_template('admin_login.html', error=True)
 
     return render_template('admin_login.html', error=False)
 
@@ -230,10 +252,16 @@ def admin_api_data():
         cur.execute("SELECT COUNT(*) FROM contact_queries WHERE YEARWEEK(created_at,1) = YEARWEEK(CURDATE(),1)")
         week = cur.fetchone()[0]
 
-        cur.execute("SELECT COUNT(*) FROM contact_queries WHERE YEAR(created_at)=YEAR(CURDATE()) AND MONTH(created_at)=MONTH(CURDATE())")
+        cur.execute(
+            "SELECT COUNT(*) FROM contact_queries "
+            "WHERE YEAR(created_at)=YEAR(CURDATE()) AND MONTH(created_at)=MONTH(CURDATE())"
+        )
         month = cur.fetchone()[0]
 
-        cur.execute("SELECT id, name, email, phone, message, created_at FROM contact_queries ORDER BY created_at DESC")
+        cur.execute(
+            "SELECT id, name, email, phone, message, created_at "
+            "FROM contact_queries ORDER BY created_at DESC"
+        )
         rows = cur.fetchall()
         cur.close()
         conn.close()
@@ -256,6 +284,7 @@ def admin_api_data():
         })
 
     except Exception as e:
+        print(f"[ADMIN DATA] Error: {e}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -266,8 +295,11 @@ def api_delete(record_id):
         conn = get_db()
         cur  = conn.cursor()
         cur.execute("DELETE FROM contact_queries WHERE id = %s", (record_id,))
+        affected = cur.rowcount
         cur.close()
         conn.close()
+        if affected == 0:
+            return jsonify({"success": False, "error": "Record not found"}), 404
         return jsonify({"success": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -275,23 +307,34 @@ def api_delete(record_id):
 
 @app.route('/admin/logout')
 def admin_logout():
-    session.pop('admin_logged_in', None)
-    session.pop('admin_username',  None)
+    session.clear()
     return redirect(url_for('admin_login'))
 
 
-#  ERROR HANDLERS 
-
+# ══════════════════════════════════════════════════════
+#  ERROR HANDLERS
+# ══════════════════════════════════════════════════════
 @app.errorhandler(404)
 def not_found(e):
-    return render_template('404.html'), 404
+    if request.path.startswith('/admin/api/') or request.path.startswith('/api/'):
+        return jsonify({"error": "Not found"}), 404
+    try:
+        return send_from_directory(app.static_folder, 'index.html'), 404
+    except Exception:
+        return "Not found", 404
+
 
 @app.errorhandler(500)
 def server_error(e):
-    return render_template('500.html'), 500
+    print(f"[ERROR] 500: {e}")
+    return jsonify({"error": "Internal server error"}), 500
 
+
+# ══════════════════════════════════════════════════════
+#  ENTRY POINT
+# ══════════════════════════════════════════════════════
 if __name__ == '__main__':
-    print("\n Starting Flask server on http://0.0.0.0:5000")
-    print(" Admin panel: http://localhost:5000/admin")
-    print("  Health check: http://localhost:5000/health")
+    print("\nStarting on http://0.0.0.0:5000")
+    print("Admin:  http://localhost:5000/admin")
+    print("Health: http://localhost:5000/health\n")
     app.run(host='0.0.0.0', port=5000, debug=True)
